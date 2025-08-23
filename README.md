@@ -1,4 +1,4 @@
-# Skylandia
+# Skylandia ---> https://unaveragetech.github.io/Skylandia/
 This as an addon made for lotus clan as a reward for members and a closed way to gain an advantage 
 https://discord.gg/MjMnsGhe8T
 
@@ -31,21 +31,21 @@ Skylandia isn’t just another “pack of modules” — it’s an evolving play
 Skylandia packs an extensive set of tools for explorers, PvP tacticians, builders, and automation enthusiasts.  
 Modules are built to be **flexible**, **powerful**, and **user‑friendly**, with categories that help you find what you need fast.
 
-
+_______________________________
 ### 🧭 Exploration & Hunting
 
 
 ### 🛡 Utility
 
-
+                                           ###Ingame catagorys
 ### 👁 Render
 
 
 ### 🤖 Automation
-
+_________________________________
 
 **How modules are used:**  
-Each module in Skylandia is toggled via the Meteor Client GUI. You can configure settings, bind keys, and interact with modules in-game. Below, each module is described, followed by a short dialog or example of how a player might use it.
+Each module in Skylandia is toggled via the Meteor Client GUI. You can configure settings, bind keys, and interact with modules in-game. Below, each module is described, followed by a short dialog or example of how a player might think to use it.
 
 ---
 
@@ -351,7 +351,7 @@ Each module in Skylandia is toggled via the Meteor Client GUI. You can configure
 	*Player:* "Can I automate trident use?"  
 	*Skylandia:* "Enable these modules for trident automation and dupe routines."
 
----
+---There are unlisted modules
 
 *For each module, open the Meteor Client GUI, find the module under its category, and toggle or configure as needed. Most modules have settings for customization and can be bound to hotkeys for quick access.*
 
