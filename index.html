@@ -1,0 +1,589 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skylandia — Meteor Client Addon</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+        
+        :root {
+            /* @tweakable primary accent color */
+            --primary-color: #00ff88;
+            /* @tweakable secondary accent color */
+            --secondary-color: #ff6b35;
+            /* @tweakable background darkness level */
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --border-color: #333333;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Space Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            padding: 4rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="1" fill="%2300ff88" opacity="0.1"/></svg>') repeat;
+            animation: stars 20s linear infinite;
+        }
+        
+        @keyframes stars {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-100px); }
+        }
+        
+        .logo {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: 2px solid var(--primary-color);
+            background: transparent;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-family: inherit;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn:hover {
+            background: var(--primary-color);
+            color: var(--bg-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 255, 136, 0.3);
+        }
+        
+        .btn.secondary {
+            border-color: var(--secondary-color);
+            color: var(--secondary-color);
+        }
+        
+        .btn.secondary:hover {
+            background: var(--secondary-color);
+        }
+        
+        /* Vision Section */
+        .vision {
+            background: var(--bg-secondary);
+            padding: 4rem 0;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: var(--primary-color);
+        }
+        
+        .vision-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .vision-card {
+            background: var(--bg-primary);
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .vision-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: var(--primary-color);
+            transition: left 0.3s ease;
+        }
+        
+        .vision-card:hover::before {
+            left: 0;
+        }
+        
+        .vision-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+        }
+        
+        .vision-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .vision-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 4rem 0;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+        
+        .feature-category {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-category:hover {
+            border-color: var(--primary-color);
+        }
+        
+        .category-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .feature-list {
+            list-style: none;
+        }
+        
+        .feature-item {
+            margin-bottom: 0.8rem;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text-secondary);
+            transition: color 0.2s ease;
+        }
+        
+        .feature-item::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+        }
+        
+        .feature-item:hover {
+            color: var(--text-primary);
+        }
+        
+        .feature-name {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        /* Access Section */
+        .access {
+            background: var(--bg-secondary);
+            padding: 4rem 0;
+            text-align: center;
+        }
+        
+        .access-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .step {
+            padding: 2rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        
+        .step-number {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary-color);
+            color: var(--bg-primary);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+        
+        /* Footer */
+        .footer {
+            padding: 3rem 0;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.5rem;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-color);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">🌌 Skylandia</h1>
+            <p class="tagline">The ultimate Meteor Client addon for anarchy explorers and automation enthusiasts</p>
+            <div class="cta-buttons">
+                <a href="https://discord.gg/MjMnsGhe8T" class="btn">Join Discord</a>
+                <a href="#features" class="btn secondary">Explore Features</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="vision">
+        <div class="container">
+            <h2 class="section-title">🎯 Project Vision</h2>
+            <p style="text-align: center; font-size: 1.1rem; max-width: 800px; margin: 0 auto;">
+                Skylandia isn't just another "pack of modules" — it's an evolving playground designed for fun, 
+                experimentation, and bending the limits of client‑side gameplay.
+            </p>
+            
+            <div class="vision-grid">
+                <div class="vision-card">
+                    <div class="vision-icon">🧭</div>
+                    <h3 class="vision-title">Exploration Powerhouse</h3>
+                    <p>Tools for stash hunting, base detection, and large‑scale scanning across vast terrains.</p>
+                </div>
+                
+                <div class="vision-card">
+                    <div class="vision-icon">🤖</div>
+                    <h3 class="vision-title">Automation Mastery</h3>
+                    <p>Eliminate repetitive chores with smart, configurable bots and intelligent scripts.</p>
+                </div>
+                
+                <div class="vision-card">
+                    <div class="vision-icon">👁️</div>
+                    <h3 class="vision-title">Enhanced Awareness</h3>
+                    <p>Custom render and ESP modules for clear, actionable intelligence in any situation.</p>
+                </div>
+                
+                <div class="vision-card">
+                    <div class="vision-icon">🔗</div>
+                    <h3 class="vision-title">Add‑on Harmony</h3>
+                    <p>Designed to play nicely with other major Meteor Client extensions and tools.</p>
+                </div>
+                
+                <div class="vision-card">
+                    <div class="vision-icon">⚡</div>
+                    <h3 class="vision-title">Innovation Hub</h3>
+                    <p>A staging ground for experimental, cutting‑edge features that push boundaries.</p>
+                </div>
+                
+                <div class="vision-card">
+                    <div class="vision-icon">🤝</div>
+                    <h3 class="vision-title">Collaborative Spirit</h3>
+                    <p>Built for contributors, tinkerers, and the creative "what if" community.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">🛠 Feature Overview</h2>
+            
+            <div class="features-grid">
+                <div class="feature-category">
+                    <h3 class="category-title">🧭 Exploration & Hunting</h3>
+                    <ul class="feature-list">
+                        <li class="feature-item"><span class="feature-name">ActivatedSpawnerDetector</span> — Pinpoints active mob spawners</li>
+                        <li class="feature-item"><span class="feature-name">CaveDisturbanceDetector</span> — Detects signs of player presence</li>
+                        <li class="feature-item"><span class="feature-name">BaseFinder</span> — Identifies base‑like structures</li>
+                        <li class="feature-item"><span class="feature-name">StashBotModule</span> — Auto‑logs stashes with waypoints</li>
+                        <li class="feature-item"><span class="feature-name">BetterStashFinder</span> — Enhanced stash detection</li>
+                        <li class="feature-item"><span class="feature-name">SearchBot</span> — Automated pattern searching</li>
+                        <li class="feature-item"><span class="feature-name">TerrainAnalyzer</span> — Strategic terrain profiling</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-category">
+                    <h3 class="category-title">👁️ Render & ESP</h3>
+                    <ul class="feature-list">
+                        <li class="feature-item"><span class="feature-name">HoleAndTunnelESP</span> — Navigation terrain features</li>
+                        <li class="feature-item"><span class="feature-name">MobGearESP</span> — Finds mobs with player loot</li>
+                        <li class="feature-item"><span class="feature-name">DroppedItemESP</span> — Tracks valuable drops</li>
+                        <li class="feature-item"><span class="feature-name">EntityClusterESP</span> — Shows mob/player clusters</li>
+                        <li class="feature-item"><span class="feature-name">CrystalPositionESP</span> — PvP crystal placements</li>
+                        <li class="feature-item"><span class="feature-name">DamageNumbersModule</span> — Real‑time damage readouts</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-category">
+                    <h3 class="category-title">🤖 Automation</h3>
+                    <ul class="feature-list">
+                        <li class="feature-item"><span class="feature-name">ElytraSwap</span> — Auto chestplate/elytra toggle</li>
+                        <li class="feature-item"><span class="feature-name">AutoEnchant</span> — Automated enchanting</li>
+                        <li class="feature-item"><span class="feature-name">BaritonePathing</span> — Full navigation integration</li>
+                        <li class="feature-item"><span class="feature-name">DemonCrystal</span> — Crystal PvP automation</li>
+                        <li class="feature-item"><span class="feature-name">ShulkerTransportModule</span> — Inventory logistics</li>
+                        <li class="feature-item"><span class="feature-name">Printer</span> — Automated building</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-category">
+                    <h3 class="category-title">🛡️ Utility</h3>
+                    <ul class="feature-list">
+                        <li class="feature-item"><span class="feature-name">GrimEfly</span> — Advanced Elytra flight</li>
+                        <li class="feature-item"><span class="feature-name">SecureChatModule</span> — Encrypted messaging</li>
+                        <li class="feature-item"><span class="feature-name">SignHistorian</span> — Archives sign text history</li>
+                        <li class="feature-item"><span class="feature-name">Pitch40Util</span> — Optimal pitch locking</li>
+                        <li class="feature-item"><span class="feature-name">OllamaBotModule</span> — AI‑powered assistant</li>
+                        <li class="feature-item"><span class="feature-name">AutoLoginModule</span> — Streamlined login</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="access">
+        <div class="container">
+            <div class="access-content">
+                <h2 class="section-title">🔑 Access & Installation</h2>
+                <p style="font-size: 1.1rem; margin-bottom: 2rem;">
+                    Skylandia is <strong>private</strong> — available only to <strong>Lotus Clan</strong> members and contributors.
+                </p>
+                
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <h3>Join Discord</h3>
+                        <p>Connect with the community at discord.gg/MjMnsGhe8T</p>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <h3>Contribute</h3>
+                        <p>Follow clan guidelines and make meaningful contributions</p>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <h3>Get Access</h3>
+                        <p>Clan approval unlocks download access to releases</p>
+                    </div>
+                </div>
+                
+                <div style="background: var(--bg-primary); padding: 2rem; border: 1px solid var(--border-color); margin-top: 2rem;">
+                    <h3 style="color: var(--primary-color); margin-bottom: 1rem;">Installation Steps:</h3>
+                    <ol style="text-align: left; max-width: 500px; margin: 0 auto;">
+                        <li>Download the latest JAR from releases</li>
+                        <li>Place it in your Meteor Client <code>mods</code> folder</li>
+                        <li>Launch Minecraft and configure via Meteor GUI</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <p><strong>Created by Beelzebub4883</strong></p>
+                    <p style="color: var(--text-secondary); margin-top: 0.5rem;">
+                        Built to explore, automate, experiment, and push Minecraft's limits.
+                    </p>
+                </div>
+                
+                <div class="footer-links">
+                    <a href="https://discord.gg/MjMnsGhe8T">Discord</a>
+                    <a href="#features">Features</a>
+                    <a href="https://github.com/Beelzebub4883/skylandia">GitHub</a>
+                </div>
+            </div>
+            
+            <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border-color); color: var(--text-secondary);">
+                <p>Use responsibly. Enjoy the chaos. 🌌</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add subtle parallax effect to header
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.header::before');
+            if (parallax) {
+                document.querySelector('.header').style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
+
+        // Animate feature cards on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all cards
+        document.querySelectorAll('.vision-card, .feature-category, .step').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
+
