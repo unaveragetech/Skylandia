@@ -2,1451 +2,476 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skylandia — Meteor Client Addon</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Skylandia - Minecraft Utility Mod</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
-        
-        :root {
-            /* @tweakable primary accent color */
-            --primary-color: #00ff88;
-            /* @tweakable secondary accent color */
-            --secondary-color: #ff6b35;
-            /* @tweakable background darkness level */
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #1a1a1a;
-            --text-primary: #ffffff;
-            --text-secondary: #b0b0b0;
-            --border-color: #333333;
-            /* @tweakable minecraft green color for accents */
-            --minecraft-green: #5cb85c;
-            /* @tweakable minecraft stone color */
-            --minecraft-stone: #7c7c7c;
-            /* @tweakable minecraft dirt color */
-            --minecraft-dirt: #8b6914;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        /* Floating animation for header elements */
-        /* @tweakable duration of floating animation */
         @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        /* @tweakable pulsing glow animation speed */
-        @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 136, 0.3); }
-            50% { box-shadow: 0 0 40px rgba(0, 255, 136, 0.6); }
-        }
-        
-        /* @tweakable particle movement animation */
-        @keyframes particle {
-            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
-        }
-        
-        /* @tweakable typing animation speed */
-        @keyframes typewriter {
-            from { width: 0; }
-            to { width: 100%; }
-        }
-        
-        /* @tweakable blinking cursor animation */
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
-        }
-        
-        /* @tweakable wave animation for text */
-        @keyframes wave {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(20deg); }
-            75% { transform: rotate(-20deg); }
-        }
-        
-        /* @tweakable bouncing animation */
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-15px); }
-            60% { transform: translateY(-7px); }
-        }
-        
-        /* @tweakable sliding entrance animation */
-        @keyframes slideInLeft {
-            from { transform: translateX(-100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        
-        /* @tweakable sliding entrance from right */
-        @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        
-        /* @tweakable rotating animation */
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        
-        /* Add floating particles */
-        .header::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            background: 
-                radial-gradient(2px 2px at 20% 30%, var(--primary-color), transparent),
-                radial-gradient(2px 2px at 40% 70%, var(--secondary-color), transparent),
-                radial-gradient(1px 1px at 90% 40%, var(--minecraft-green), transparent),
-                radial-gradient(1px 1px at 60% 20%, var(--primary-color), transparent);
-            background-size: 200px 200px;
-            animation: particle /* @tweakable particle animation duration */ 20s linear infinite;
-            pointer-events: none;
-            opacity: 0.6;
-        }
-        
-        body {
-            font-family: 'Space Mono', monospace;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            overflow-x: hidden;
-            /* @tweakable page load animation duration */
-            animation: fadeInUp 1s ease-out;
-        }
-        
-        /* Add loading animation for the entire page */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
+            0% {
+                transform: translateY(0px);
             }
-            to {
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        @keyframes starTwinkle {
+            0% {
+                opacity: 0.4;
+            }
+            50% {
                 opacity: 1;
-                transform: translateY(0);
+            }
+            100% {
+                opacity: 0.4;
             }
         }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-            padding: 4rem 0;
-            text-align: center;
+
+        .minecraft-btn {
+            background-color: #4CAF50;
+            border: 2px solid #45a049;
+            color: white;
+            padding: 10px 20px;
+            text-transform: uppercase;
+            font-weight: bold;
+            cursor: pointer;
             position: relative;
             overflow: hidden;
+            transition: all 0.3s;
         }
-        
-        .header::before {
-            content: '';
+
+        .minecraft-btn:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
+        }
+
+        .feature-card {
+            background: rgba(32, 32, 32, 0.9);
+            border: 2px solid #333;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+            border-color: #4CAF50;
+        }
+
+        .star {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            /* @tweakable size of minecraft block pattern */
-            background: 
-                linear-gradient(90deg, transparent 0%, transparent 48%, var(--minecraft-stone) 48%, var(--minecraft-stone) 52%, transparent 52%),
-                linear-gradient(0deg, transparent 0%, transparent 48%, var(--minecraft-stone) 48%, var(--minecraft-stone) 52%, transparent 52%);
-            background-size: 20px 20px;
-            opacity: 0.05;
-            animation: blockShift 30s linear infinite;
+            width: 2px;
+            height: 2px;
+            background: white;
+            animation: starTwinkle 2s infinite;
         }
-        
-        /* @tweakable speed of block pattern animation */
-        @keyframes blockShift {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(20px, 20px); }
-        }
-        
-        .logo {
-            font-size: 3.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            position: relative;
-            z-index: 1;
-            /* @tweakable logo floating animation duration */
+
+        .floating {
             animation: float 3s ease-in-out infinite;
         }
-        
-        .logo::after {
-            content: '⛏️';
-            position: absolute;
-            top: -20px;
-            right: -30px;
-            font-size: 1.5rem;
-            /* @tweakable pickaxe wave animation duration */
-            animation: wave 2s ease-in-out infinite;
-        }
-        
-        .tagline {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-            position: relative;
-            z-index: 1;
-            overflow: hidden;
-            white-space: nowrap;
-            border-right: 2px solid var(--primary-color);
-            width: 0;
-            /* @tweakable typewriter animation duration and delay */
-            animation: 
-                typewriter 2s steps(60) 1s forwards,
-                blink 1s infinite 3s;
-        }
-        
-        .cta-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-            position: relative;
-            z-index: 1;
-        }
-        
-        /* Minecraft-style buttons */
-        .btn {
-            padding: 12px 24px;
-            border: 3px solid var(--primary-color);
-            background: linear-gradient(145deg, transparent 0%, rgba(92, 184, 92, 0.1) 100%);
-            color: var(--primary-color);
-            text-decoration: none;
-            font-family: inherit;
-            font-weight: 700;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            /* @tweakable minecraft button styling */
-            box-shadow: 
-                inset -2px -2px 0 rgba(0,0,0,0.3),
-                inset 2px 2px 0 rgba(255,255,255,0.2);
-            text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
-            /* @tweakable button bounce animation delay */
-            animation: bounce 2s infinite 4s;
-        }
-        
-        .btn:nth-child(2) {
-            /* @tweakable second button animation delay offset */
-            animation-delay: 4.5s;
-        }
-        
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            /* @tweakable minecraft button hover pattern */
-            background: repeating-linear-gradient(
-                45deg,
-                transparent,
-                transparent 2px,
-                rgba(92, 184, 92, 0.1) 2px,
-                rgba(92, 184, 92, 0.1) 4px
-            );
-            transition: left 0.3s ease;
-        }
-        
-        .btn:hover::before {
-            left: 0;
-        }
-        
-        .btn:hover {
-            background: linear-gradient(145deg, var(--minecraft-green), var(--primary-color));
-            color: var(--bg-primary);
-            transform: translateY(-2px);
-            /* @tweakable minecraft button hover glow */
-            box-shadow: 
-                inset -2px -2px 0 rgba(0,0,0,0.3),
-                inset 2px 2px 0 rgba(255,255,255,0.2),
-                0 6px 20px rgba(92, 184, 92, 0.4);
-            /* @tweakable button hover pulse duration */
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-        
-        .btn.secondary {
-            border-color: var(--secondary-color);
-            color: var(--secondary-color);
-        }
-        
-        .btn.secondary:hover {
-            background: var(--secondary-color);
-        }
-        
-        /* Enhanced hover effects for buttons */
-        .btn::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
-            transform: translate(-50%, -50%);
-            transition: all 0.3s ease;
-            border-radius: 50%;
-            pointer-events: none;
-        }
-        
-        .btn:hover::after {
-            /* @tweakable button ripple effect size */
-            width: 100px;
-            height: 100px;
-        }
-        
-        /* Module usage dialog styles */
-        .module-dialog {
-            background: linear-gradient(135deg, var(--bg-primary) 0%, #2a2a2a 100%);
-            border-left: 3px solid var(--primary-color);
-            padding: 1rem;
-            margin: 0.5rem 0;
-            border-radius: 0 4px 4px 0;
-            /* @tweakable module dialog fade animation duration */
-            opacity: 0;
-            transform: translateX(-20px);
-            animation: fadeSlideIn 0.5s ease-out forwards;
-        }
-        
-        /* @tweakable module dialog animation */
-        @keyframes fadeSlideIn {
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-        
-        .player-text {
-            color: var(--secondary-color);
-            font-style: italic;
-            margin-bottom: 0.25rem;
-        }
-        
-        .player-text::before {
-            content: "👤 Player: ";
-            font-style: normal;
-        }
-        
-        .skylandia-text {
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-        
-        .skylandia-text::before {
-            content: "🌌 Skylandia: ";
-        }
-        
-        /* Enhanced module item styling */
-        .feature-item {
-            margin-bottom: 1.2rem;
-            padding: 1rem;
-            background: linear-gradient(135deg, rgba(0, 255, 136, 0.05) 0%, rgba(255, 107, 53, 0.05) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        
-        .feature-item:hover {
-            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, rgba(255, 107, 53, 0.1) 100%);
-            border-color: var(--primary-color);
-            transform: translateY(-2px);
-        }
-        
-        .feature-item::before {
-            content: '⚡';
-            position: absolute;
-            left: 0.5rem;
-            top: 0.5rem;
-            color: var(--primary-color);
-            font-size: 1.2rem;
-        }
-        
-        .feature-description {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin: 0.5rem 0;
-            font-style: italic;
-        }
-        
-        /* Enhanced section styling */
-        .usage-note {
-            background: var(--bg-primary);
-            border: 2px solid var(--minecraft-green);
-            padding: 1.5rem;
-            margin: 2rem 0;
-            text-align: center;
-            border-radius: 4px;
-            /* @tweakable usage note glow effect */
-            box-shadow: 0 0 20px rgba(92, 184, 92, 0.2);
-        }
-        
-        .usage-note h3 {
-            color: var(--minecraft-green);
-            margin-bottom: 1rem;
-            font-size: 1.3rem;
-        }
-        
-        /* Vision Section */
-        .vision {
-            background: var(--bg-secondary);
-            padding: 4rem 0;
-        }
-        
-        .section-title {
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
-            text-align: center;
-            color: var(--primary-color);
-            /* @tweakable diamond pulse animation duration */
-            animation: pulse 2s ease-in-out infinite;
-        }
-        
-        /* Minecraft-themed vision cards */
-        .vision-card {
-            background: linear-gradient(135deg, var(--bg-primary) 0%, #1a1a1a 50%, var(--bg-primary) 100%);
-            padding: 2rem;
-            border: 2px solid var(--border-color);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            /* @tweakable minecraft block shadow effect */
-            box-shadow: 
-                inset -2px -2px 0 rgba(0,0,0,0.3),
-                inset 2px 2px 0 rgba(255,255,255,0.1);
-            /* @tweakable vision card slide animation duration */
-            animation: slideInLeft 0.8s ease-out forwards;
-            opacity: 0;
-        }
-        
-        .vision-card.animate {
-            transform: translateY(0);
-            opacity: 1;
-        }
-        
-        .vision-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 3px;
-            /* @tweakable minecraft-style gradient bar */
-            background: linear-gradient(90deg, var(--minecraft-green), var(--primary-color), var(--minecraft-green));
-            transition: left 0.3s ease;
-        }
-        
-        .vision-card:hover::before {
-            left: 0;
-        }
-        
-        .vision-card:hover {
-            transform: translateY(-3px);
-            border-color: var(--minecraft-green);
-            /* @tweakable hover glow effect */
-            box-shadow: 
-                inset -2px -2px 0 rgba(0,0,0,0.3),
-                inset 2px 2px 0 rgba(255,255,255,0.1),
-                0 8px 25px rgba(92, 184, 92, 0.3);
-        }
-        
-        /* Sliding animations for vision cards */
-        .vision-card:nth-child(odd) {
-            /* @tweakable vision card slide animation duration */
-            animation: slideInLeft 0.8s ease-out forwards;
-            opacity: 0;
-        }
-        
-        .vision-card:nth-child(even) {
-            /* @tweakable vision card slide animation duration */
-            animation: slideInRight 0.8s ease-out forwards;
-            opacity: 0;
-        }
-        
-        /* Stagger the vision card animations */
-        .vision-card:nth-child(1) { animation-delay: 0.1s; }
-        .vision-card:nth-child(2) { animation-delay: 0.2s; }
-        .vision-card:nth-child(3) { animation-delay: 0.3s; }
-        .vision-card:nth-child(4) { animation-delay: 0.4s; }
-        .vision-card:nth-child(5) { animation-delay: 0.5s; }
-        .vision-card:nth-child(6) { animation-delay: 0.6s; }
-        
-        /* Minecraft-themed icons */
-        .vision-icon {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            /* @tweakable pixelated icon effect */
-            filter: contrast(1.2) saturate(1.3);
-            text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
-            transition: transform 0.3s ease;
-        }
-        
-        .vision-card:hover .vision-icon {
-            /* @tweakable icon rotation on hover */
-            animation: rotate 1s ease-in-out;
-        }
-        
-        .vision-title {
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
-            color: var(--primary-color);
-        }
-        
-        /* Features Section */
-        .features {
-            padding: 4rem 0;
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 3rem;
-            margin-top: 3rem;
-        }
-        
-        /* Minecraft-style feature categories */
-        .feature-category {
-            background: linear-gradient(145deg, var(--bg-secondary) 0%, #242424 100%);
-            border: 2px solid var(--border-color);
-            padding: 2rem;
-            transition: all 0.3s ease;
-            position: relative;
-            /* @tweakable minecraft chest-like styling */
-            box-shadow: 
-                inset -3px -3px 0 rgba(0,0,0,0.4),
-                inset 3px 3px 0 rgba(255,255,255,0.1);
-            transform: translateY(50px);
-            opacity: 0;
-            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-        
-        .feature-category.animate {
-            transform: translateY(0);
-            opacity: 1;
-        }
-        
-        .feature-category::after {
-            content: '';
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 12px;
-            height: 12px;
-            /* @tweakable minecraft block pixel size */
-            background: var(--minecraft-dirt);
-            box-shadow: 
-                0 0 0 1px var(--minecraft-stone),
-                12px 0 0 0 var(--minecraft-dirt),
-                12px 0 0 1px var(--minecraft-stone);
-        }
-        
-        .feature-category:hover {
-            border-color: var(--minecraft-green);
-            transform: translateY(-2px);
-        }
-        
-        .category-title {
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            color: var(--secondary-color);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .feature-list {
-            list-style: none;
-        }
-        
-        .feature-item {
-            margin-bottom: 0.8rem;
-            padding-left: 1.5rem;
-            position: relative;
-            color: var(--text-secondary);
-            transition: all 0.3s ease;
-        }
-        
-        .feature-item::before {
-            content: '▶';
-            position: absolute;
-            left: 0;
-            color: var(--primary-color);
-        }
-        
-        .feature-item:hover {
-            color: var(--text-primary);
-            transform: translateX(10px);
-            /* @tweakable feature item hover glow */
-            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
-        }
-        
-        .feature-name {
-            font-weight: 700;
-            color: var(--primary-color);
-        }
-        
-        /* Access Section */
-        .access {
-            background: var(--bg-secondary);
-            padding: 4rem 0;
-            text-align: center;
-        }
-        
-        .access-content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .steps {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            margin: 3rem 0;
-        }
-        
-        /* Minecraft-style steps */
-        .step {
-            padding: 2rem;
-            background: linear-gradient(135deg, var(--bg-primary) 0%, #1e1e1e 100%);
-            border: 2px solid var(--border-color);
-            position: relative;
-            /* @tweakable minecraft crafting table style */
-            box-shadow: 
-                inset -3px -3px 0 rgba(0,0,0,0.4),
-                inset 3px 3px 0 rgba(255,255,255,0.1);
-        }
-        
-        .step::after {
-            content: '';
-            position: absolute;
-            bottom: 5px;
-            left: 5px;
-            right: 5px;
-            height: 2px;
-            /* @tweakable minecraft plank texture */
-            background: repeating-linear-gradient(
-                90deg,
-                var(--minecraft-dirt),
-                var(--minecraft-dirt) 3px,
-                var(--minecraft-stone) 3px,
-                var(--minecraft-stone) 6px
-            );
-        }
-        
-        .step-number {
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(145deg, var(--minecraft-green), var(--primary-color));
-            color: var(--bg-primary);
-            width: 30px;
-            height: 30px;
-            border-radius: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            /* @tweakable minecraft number block styling */
-            box-shadow: 
-                inset -2px -2px 0 rgba(0,0,0,0.3),
-                inset 2px 2px 0 rgba(255,255,255,0.3);
-            transition: all 0.3s ease;
-        }
-        
-        .step:hover .step-number {
-            /* @tweakable step number hover scale */
-            transform: translateX(-50%) scale(1.2);
-            /* @tweakable step number hover animation duration */
-            animation: bounce 0.8s ease-in-out;
-        }
-        
-        /* Footer */
-        .footer {
-            padding: 3rem 0;
-            text-align: center;
-            border-top: 1px solid var(--border-color);
-        }
-        
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 2rem;
-        }
-        
-        .footer-links {
-            display: flex;
-            gap: 2rem;
-            flex-wrap: wrap;
-        }
-        
-        .footer-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        
-        .footer-links a:hover {
-            color: var(--primary-color);
-        }
-        
-        /* Add minecraft-style decorative elements */
-        .section-title::before {
-            content: '';
+
+        .version-tag {
+            background-color: #4CAF50;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.9em;
             display: inline-block;
-            width: 16px;
-            height: 16px;
-            /* @tweakable minecraft diamond size */
-            background: linear-gradient(45deg, #4dabf7, #228be6);
-            margin-right: 10px;
-            /* @tweakable minecraft diamond styling */
-            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-            box-shadow: 0 0 10px rgba(77, 171, 247, 0.5);
         }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .logo {
-                font-size: 2.5rem;
-            }
-            
-            .cta-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .footer-content {
-                flex-direction: column;
-                text-align: center;
-            }
-        }
-        
-        /* Minecraft-themed scrollbar */
-        ::-webkit-scrollbar {
-            width: 12px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: var(--bg-secondary);
-            /* @tweakable minecraft scrollbar track pattern */
-            border-left: 2px solid var(--minecraft-stone);
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, var(--minecraft-green), var(--primary-color));
-            /* @tweakable minecraft scrollbar thumb styling */
-            border: 1px solid var(--minecraft-stone);
-            box-shadow: inset 1px 1px 0 rgba(255,255,255,0.2);
-            transition: all 0.3s ease;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            /* ...existing styles... */
-            /* @tweakable scrollbar thumb pulse on hover */
-            animation: pulse 1s ease-in-out infinite;
+
+        .changelog-item {
+            border-left: 2px solid #4CAF50;
+            padding-left: 1rem;
+            margin-bottom: 1rem;
         }
     </style>
 </head>
-<body>
-    <header class="header">
-        <div class="container">
-            <h1 class="logo">🌌 Skylandia</h1>
-            <p class="tagline">The ultimate Meteor Client addon for anarchy explorers and automation enthusiasts</p>
-            <div class="cta-buttons">
-                <a href="https://discord.gg/MjMnsGhe8T" class="btn">Join Discord</a>
-                <a href="#features" class="btn secondary">Explore Features</a>
+<body class="bg-gray-900 text-gray-100">
+<!-- Navigation -->
+<nav class="bg-gray-800 border-b border-green-600 fixed w-full z-50">
+    <div class="container mx-auto px-6 py-3">
+        <div class="flex justify-between items-center">
+            <div class="text-2xl font-bold text-green-500">Skylandia</div>
+            <div class="hidden md:flex space-x-8">
+                <a class="hover:text-green-500 transition-colors" href="#">Home</a>
+                <a class="hover:text-green-500 transition-colors" href="#features">Features</a>
+                <a class="hover:text-green-500 transition-colors" href="#access">Access</a>
+                <a class="hover:text-green-500 transition-colors" href="#releases">Releases</a>
+                <a class="hover:text-green-500 transition-colors" href="#installation">Installation</a>
+                <a class="hover:text-green-500 transition-colors" href="#support">Support</a>
+                <a class="hover:text-green-500 transition-colors"
+                   href="https://github.com/FaxHack/Skylandia">GitHub</a>
             </div>
         </div>
-    </header>
+    </div>
+</nav>
 
-    <section class="vision">
-        <div class="container">
-            <h2 class="section-title">🎯 Project Vision</h2>
-            <p style="text-align: center; font-size: 1.1rem; max-width: 800px; margin: 0 auto 1rem;">
-                Skylandia isn't just another "pack of modules" — it's an evolving playground designed for fun, 
-                experimentation, and bending the limits of client‑side gameplay.
-            </p>
-            <p style="text-align: center; font-size: 1rem; color: var(--secondary-color); margin-bottom: 2rem;">
-                💡 <em>Expect surprises — some modules are bleeding‑edge and will evolve rapidly.</em>
-            </p>
-            
-            <div class="vision-grid">
-                <div class="vision-card">
-                    <div class="vision-icon">⛏️</div>
-                    <h3 class="vision-title">Exploration Powerhouse</h3>
-                    <p>Tools for stash hunting, base detection, and large‑scale scanning across vast terrains.</p>
-                </div>
-                
-                <div class="vision-card">
-                    <div class="vision-icon">🔧</div>
-                    <h3 class="vision-title">Automation Mastery</h3>
-                    <p>Eliminate repetitive chores with smart, configurable bots and intelligent scripts.</p>
-                </div>
-                
-                <div class="vision-card">
-                    <div class="vision-icon">🗡️</div>
-                    <h3 class="vision-title">Enhanced Awareness</h3>
-                    <p>Custom render and ESP modules for clear, actionable intelligence in any situation.</p>
-                </div>
-                
-                <div class="vision-card">
-                    <div class="vision-icon">⚙️</div>
-                    <h3 class="vision-title">Add‑on Harmony</h3>
-                    <p>Designed to play nicely with other major Meteor Client extensions and tools.</p>
-                </div>
-                
-                <div class="vision-card">
-                    <div class="vision-icon">🧪</div>
-                    <h3 class="vision-title">Innovation Hub</h3>
-                    <p>A staging ground for experimental, cutting‑edge features that push boundaries.</p>
-                </div>
-                
-                <div class="vision-card">
-                    <div class="vision-icon">🏗️</div>
-                    <h3 class="vision-title">Collaborative Spirit</h3>
-                    <p>Built for contributors, tinkerers, and the creative "what if" community.</p>
-                </div>
+<!-- Hero Section -->
+<div class="relative min-h-screen flex items-center justify-center pt-16">
+    <div id="stars-container"></div>
+    <div class="text-center px-6">
+        <h1 class="text-6xl font-bold mb-4 floating">Skylandia</h1>
+        <p class="text-xl mb-8 text-green-400">Your Ultimate Tool for Anarchy Gameplay</p>
+        <p class="max-w-2xl mx-auto mb-8 text-gray-300">
+            Enhance your Minecraft experience with powerful features designed specifically for anarchy servers.
+            Find bases, detect patterns, and dominate the game with advanced utilities.
+        </p>
+        <a class="minecraft-btn inline-block" href="https://github.com/FaxHack/Skylandia/releases/latest">
+            Download Latest Version
+        </a>
+    </div>
+</div>
+
+<!-- Features Section -->
+<section class="py-20 bg-gray-800" id="features">
+    <div class="container mx-auto px-6">
+        <h2 class="text-4xl font-bold text-center mb-16 text-green-500">Features</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-4 text-green-400">Advanced Chunk Detection</h3>
+                <p class="text-gray-300">Identify new and modified chunks with precision, perfect for base hunting.</p>
+            </div>
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-4 text-green-400">Base Finder</h3>
+                <p class="text-gray-300">Sophisticated algorithms to detect potential base locations and player
+                    activity.</p>
+            </div>
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-4 text-green-400">Storage Looter</h3>
+                <p class="text-gray-300">Efficiently manage and search through storage systems with enhanced
+                    visibility.</p>
+            </div>
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-4 text-green-400">StackedMinecartDetector</h3>
+                <p class="text-gray-300">Detects for hidden stacked spawner is in the area.</p>
+            </div>
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-4 text-green-400">GrimDuraFirework</h3>
+                <p class="text-gray-300">A clever fix for fireworks issues on the Mio client when using Grim Durability
+                    ElytraFly with a chestplate. Fly smoothly without a hitch!</p>
+            </div>
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-4 text-green-400">ESP Features</h3>
+                <p class="text-gray-300">Comprehensive ESP system including PotESP, HoleESP, and MobGearESP.</p>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <section id="features" class="features">
-        <div class="container">
-            <h2 class="section-title">🛠 Feature Overview</h2>
-            <p style="text-align: center; font-size: 1.1rem; max-width: 900px; margin: 0 auto 2rem; color: var(--text-secondary);">
-                Skylandia packs an extensive set of tools for explorers, PvP tacticians, builders, and automation enthusiasts.
-                Modules are built to be <strong>flexible</strong>, <strong>powerful</strong>, and <strong>user‑friendly</strong>.
-            </p>
-            
-            <div class="usage-note">
-                <h3>🎮 How Modules Are Used</h3>
-                <p>Each module in Skylandia is toggled via the Meteor Client GUI. You can configure settings, bind keys, 
-                and interact with modules in-game. Below, each module is described with usage examples.</p>
-            </div>
-            
-            <div class="features-grid">
-                <div class="feature-category">
-                    <h3 class="category-title">🧭 Exploration & Hunting</h3>
-                    <ul class="feature-list">
-                        <li class="feature-item">
-                            <span class="feature-name">ActivatedSpawnerDetector</span>
-                            <div class="feature-description">Pinpoints active mob spawners for lucrative hunts.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"I want to find mob spawners for XP farms."</div>
-                                <div class="skylandia-text">"Enable ActivatedSpawnerDetector and fly around caves. Spawners will be highlighted when active."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">CaveDisturbanceDetector</span>
-                            <div class="feature-description">Detects signs of recent player activity to locate hidden stashes or bases.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Are there any bases nearby?"</div>
-                                <div class="skylandia-text">"Turn on CaveDisturbanceDetector to scan for player-placed blocks and disturbances."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">Trails</span>
-                            <div class="feature-description">Records and replays your movement paths for analysis or nostalgia.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"I want to retrace my steps from last week."</div>
-                                <div class="skylandia-text">"Enable Trails to record your path, then replay it later."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">BaseFinder</span>
-                            <div class="feature-description">Identifies base-like structures using block/entity patterns.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Is this chunk a possible base?"</div>
-                                <div class="skylandia-text">"BaseFinder will scan for signs like signs, portals, and bubble columns."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">StashBotModule</span>
-                            <div class="feature-description">Auto-logs and manages stashes with waypoints and alerts.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"I found a stash, can I mark it?"</div>
-                                <div class="skylandia-text">"StashBotModule will log the stash and set a waypoint automatically."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">BetterStashFinder</span>
-                            <div class="feature-description">Adds refined filters and Xaero's Minimap/World Map integration.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"I want to filter stashes by loot type."</div>
-                                <div class="skylandia-text">"BetterStashFinder lets you set custom filters and integrates with Xaero's maps."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">OldChunkNotifier</span>
-                            <div class="feature-description">Alerts when entering historically loaded chunks.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Am I in an old chunk?"</div>
-                                <div class="skylandia-text">"OldChunkNotifier will notify you when you enter a chunk with history."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">TrailFollower</span>
-                            <div class="feature-description">Automatically retraces discovered trails via pitch-flight or Baritone.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Can I follow someone's trail?"</div>
-                                <div class="skylandia-text">"TrailFollower will automate your movement along recorded trails."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">SearchBot</span>
-                            <div class="feature-description">Executes grid, spiral, random, or custom pattern searches with waypoint automation.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"I want to search a large area for stashes."</div>
-                                <div class="skylandia-text">"SearchBot will move you in a search pattern and mark found locations."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">TerrainAnalyzer</span>
-                            <div class="feature-description">Profiles terrain for strategic builds, travel, or PvP choke-points.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Is this terrain good for a base?"</div>
-                                <div class="skylandia-text">"TerrainAnalyzer will analyze and report strategic features."</div>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                
-                <div class="feature-category">
-                    <h3 class="category-title">🛡️ Utility</h3>
-                    <ul class="feature-list">
-                        <li class="feature-item">
-                            <span class="feature-name">GrimDuraFirework</span>
-                            <div class="feature-description">Smart firework use to stretch Elytra lifespan.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"How do I save Elytra durability?"</div>
-                                <div class="skylandia-text">"GrimDuraFirework will optimize firework usage for you."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">SignHistorian</span>
-                            <div class="feature-description">Archives and restores sign text history.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Can I recover a broken sign's text?"</div>
-                                <div class="skylandia-text">"SignHistorian keeps a log and can restore sign text."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">Pitch40Util</span>
-                            <div class="feature-description">Locks optimal pitch 40 for height/velocity gain.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"How do I maximize flight speed?"</div>
-                                <div class="skylandia-text">"Pitch40Util locks your pitch for best Elytra performance."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">GrimEfly</span>
-                            <div class="feature-description">Advanced Elytra flight with on-the-fly chestplate swapping.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Can I swap to a chestplate mid-flight?"</div>
-                                <div class="skylandia-text">"GrimEfly automates Elytra and chestplate swapping."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">SecureChatModule</span>
-                            <div class="feature-description">Encrypted messaging and custom chat filters.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"How do I send secret messages?"</div>
-                                <div class="skylandia-text">"SecureChatModule encrypts your chat and filters spam."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">AutoLoginModule</span>
-                            <div class="feature-description">Streamlined server login automation.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Can I auto-login to servers?"</div>
-                                <div class="skylandia-text">"AutoLoginModule will handle login prompts for you."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">OllamaBotModule</span>
-                            <div class="feature-description">AI-powered chat and automation assistant.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Can I get AI help in chat?"</div>
-                                <div class="skylandia-text">"OllamaBotModule provides AI chat and automation."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">BaritonePathing</span>
-                            <div class="feature-description">Integrates full Baritone navigation.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Can I use Baritone to walk to coordinates?"</div>
-                                <div class="skylandia-text">"BaritonePathing lets you set goals and automates movement."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">ElytraSwap</span>
-                            <div class="feature-description">Auto-toggles between Elytra and chestplate.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Can I swap gear automatically?"</div>
-                                <div class="skylandia-text">"ElytraSwap will switch for you based on context."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">Firework</span>
-                            <div class="feature-description">Fires rockets at boost-end for seamless flight.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"How do I keep flying without stopping?"</div>
-                                <div class="skylandia-text">"Firework module will boost you at the right time."</div>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                
-                <div class="feature-category">
-                    <h3 class="category-title">👁️ Render</h3>
-                    <ul class="feature-list">
-                        <li class="feature-item">
-                            <span class="feature-name">HoleAndTunnelAndStairsESP</span>
-                            <div class="feature-description">Highlights navigation-critical terrain features.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Where are the tunnels and holes?"</div>
-                                <div class="skylandia-text">"Enable this ESP to see them highlighted."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">PotESP</span>
-                            <div class="feature-description">Flags decorated pots and potion-effect locations.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Where are the pots with effects?"</div>
-                                <div class="skylandia-text">"PotESP will show them in your render."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">MobGearESP</span>
-                            <div class="feature-description">Finds mobs wearing player loot.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Did a mob pick up my gear?"</div>
-                                <div class="skylandia-text">"MobGearESP will highlight mobs with gear."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">DroppedItemESP</span>
-                            <div class="feature-description">Keeps valuable drops visible.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Where are my dropped items?"</div>
-                                <div class="skylandia-text">"DroppedItemESP will keep them visible."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">EntityClusterESP</span>
-                            <div class="feature-description">Shows dense mob/player clusters for farms or raids.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Where are the mob clusters?"</div>
-                                <div class="skylandia-text">"EntityClusterESP will show you clusters on the map."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">VanityESP</span>
-                            <div class="feature-description">Highlights maparts and banners for collectors.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Where are the banners and maparts?"</div>
-                                <div class="skylandia-text">"VanityESP will highlight them for you."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">RoleTags</span>
-                            <div class="feature-description">Displays team roles above player heads.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Who is on my team?"</div>
-                                <div class="skylandia-text">"RoleTags will show roles above players."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">CrystalPositionESP</span>
-                            <div class="feature-description">Visualizes crystal placements for PvP control.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Where should I place crystals?"</div>
-                                <div class="skylandia-text">"CrystalPositionESP will show optimal spots."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">DamageNumbersModule</span>
-                            <div class="feature-description">Real-time damage readouts in combat.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"How much damage am I doing?"</div>
-                                <div class="skylandia-text">"DamageNumbersModule will show numbers above targets."</div>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                
-                <div class="feature-category">
-                    <h3 class="category-title">🤖 Automation</h3>
-                    <ul class="feature-list">
-                        <li class="feature-item">
-                            <span class="feature-name">AFKVanillaFly</span>
-                            <div class="feature-description">Maintains smooth AFK flight for long trips.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Can I fly AFK for hours?"</div>
-                                <div class="skylandia-text">"AFKVanillaFly will keep you flying and use fireworks as needed."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">AreaLoader</span>
-                            <div class="feature-description">Preloads vast map sections for art/chunk prep.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Can I load a big area for building?"</div>
-                                <div class="skylandia-text">"AreaLoader will automate chunk loading."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">AutoDropDupe / ItemFrameDupe / duprexion</span>
-                            <div class="feature-description">Experimental duplication routines.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Can I dupe items?"</div>
-                                <div class="skylandia-text">"Enable these modules and follow instructions for each dupe method."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">AutoEnchant</span>
-                            <div class="feature-description">Automates enchanting at anvils/tables.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Can I enchant items automatically?"</div>
-                                <div class="skylandia-text">"AutoEnchant will handle the process for you."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">AutomationModule</span>
-                            <div class="feature-description">General purpose task automator.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Can I automate repetitive tasks?"</div>
-                                <div class="skylandia-text">"AutomationModule lets you script and automate actions."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">AutoPortal</span>
-                            <div class="feature-description">Automates Nether portal hops.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Can I travel through portals automatically?"</div>
-                                <div class="skylandia-text">"AutoPortal will handle portal travel."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">Boomer</span>
-                            <div class="feature-description">Manages TNT-based attacks.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Can I automate TNT attacks?"</div>
-                                <div class="skylandia-text">"Boomer will handle TNT placement and detonation."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">ChunkChestGrid</span>
-                            <div class="feature-description">Logs chunk-based chest grids.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Can I map out chest locations?"</div>
-                                <div class="skylandia-text">"ChunkChestGrid will log and display chest grids."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">CrashSuite</span>
-                            <div class="feature-description">Controlled crash testing toolkit.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Can I test server crash exploits?"</div>
-                                <div class="skylandia-text">"CrashSuite provides safe crash testing tools."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">DemonCrystal</span>
-                            <div class="feature-description">Automates crystal PvP placement/breaks.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Can I automate crystal PvP?"</div>
-                                <div class="skylandia-text">"DemonCrystal will place and break crystals for you."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">Dualist</span>
-                            <div class="feature-description">Automates dual-wield combat flows.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Can I fight with two weapons?"</div>
-                                <div class="skylandia-text">"Dualist will automate dual-wielding."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">Printer</span>
-                            <div class="feature-description">Automated building via block placement.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Can I build structures automatically?"</div>
-                                <div class="skylandia-text">"Printer will place blocks for you according to a schematic."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">ShulkerTransportModule / SmartShulkerManager</span>
-                            <div class="feature-description">Inventory and storage logistics.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Can I manage shulker boxes automatically?"</div>
-                                <div class="skylandia-text">"These modules will automate shulker management and transport."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">SkylandiaHammer</span>
-                            <div class="feature-description">Automated mining assistant.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Can I mine large areas automatically?"</div>
-                                <div class="skylandia-text">"SkylandiaHammer will mine for you."</div>
-                            </div>
-                        </li>
-                        
-                        <li class="feature-item">
-                            <span class="feature-name">TridentDupe / Tridentus / TridentAura</span>
-                            <div class="feature-description">Trident duplication and automation for travel/PvP.</div>
-                            <div class="module-dialog">
-                                <div class="player-text">"Can I automate trident use?"</div>
-                                <div class="skylandia-text">"Enable these modules for trident automation and dupe routines."</div>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="usage-note" style="margin-top: 3rem;">
-                <h3>🎮 Module Usage</h3>
-                <p><em>For each module, open the Meteor Client GUI, find the module under its category, and toggle or configure as needed. 
-                Most modules have settings for customization and can be bound to hotkeys for quick access.</em></p>
-            </div>
-        </div>
-    </section>
-
-    <section class="access">
-        <div class="container">
-            <div class="access-content">
-                <h2 class="section-title">🔑 Access & Installation</h2>
-                <p style="font-size: 1.1rem; margin-bottom: 2rem;">
-                    Skylandia is <strong>private</strong> — available only to <strong>Lotus Clan</strong> members and contributors.
+<!-- Access & Security Section -->
+<section class="py-20" id="access">
+    <div class="container mx-auto px-6">
+        <h2 class="text-4xl font-bold text-center mb-4 text-green-500">Access &amp; Security</h2>
+        <p class="text-center text-gray-400 mb-16 max-w-2xl mx-auto">
+            Skylandia is a closed, member-only addon. Every copy is individually authorized &mdash;
+            the mod verifies your identity on every launch before any features become available.
+        </p>
+        <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-3 text-green-400">&#128274; Whitelist Only</h3>
+                <p class="text-gray-300">
+                    Access is granted exclusively to approved Lotus Clan members and contributors.
+                    Your username must appear in the authorized list embedded inside the JAR itself &mdash;
+                    no external list, no workaround.
                 </p>
-                
-                <div class="steps">
-                    <div class="step">
-                        <div class="step-number">1</div>
-                        <h3>Join Discord</h3>
-                        <p>Connect with the community at discord.gg/MjMnsGhe8T</p>
-                    </div>
-                    
-                    <div class="step">
-                        <div class="step-number">2</div>
-                        <h3>Contribute</h3>
-                        <p>Follow clan guidelines and make meaningful contributions</p>
-                    </div>
-                    
-                    <div class="step">
-                        <div class="step-number">3</div>
-                        <h3>Get Access</h3>
-                        <p>Clan approval unlocks download access to releases</p>
-                    </div>
+            </div>
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-3 text-green-400">&#128100; UUID Verification</h3>
+                <p class="text-gray-300">
+                    Beyond a username check, Skylandia optionally verifies your Mojang UUID against
+                    a registered mapping. Even if someone knows your username, they cannot load the
+                    mod without your exact account UUID matching the record.
+                </p>
+            </div>
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-3 text-green-400">&#128196; Per-Launch Validation</h3>
+                <p class="text-gray-300">
+                    The whitelist is regenerated and cryptographically re-signed from the JAR on
+                    every single launch. Local copies are never trusted &mdash; the JAR is always
+                    the source of truth, making it impossible to tamper with access records between
+                    sessions.
+                </p>
+            </div>
+        </div>
+        <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-3 text-green-400">&#128272; Signature Verification</h3>
+                <p class="text-gray-300">
+                    Every whitelist file is cryptographically signed at write time. If the signature
+                    is missing, expired, or does not match &mdash; access is denied to everyone, even
+                    valid users. There is no silent fallback or grace mode.
+                </p>
+            </div>
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-3 text-green-400">&#127981; API-Backed Identity</h3>
+                <p class="text-gray-300">
+                    UUID lookups are performed against the official Mojang API with an automatic
+                    fallback to a secondary source for reliability. Your identity is confirmed
+                    against Mojang's own records, not just a local string.
+                </p>
+            </div>
+        </div>
+        <div class="max-w-3xl mx-auto mt-16 feature-card p-8 rounded-lg text-center">
+            <h3 class="text-2xl font-bold mb-4 text-green-400">Want Access?</h3>
+            <p class="text-gray-300 mb-6">
+                Access is earned, not purchased. Join the Lotus Clan Discord, contribute to the
+                community, and get reviewed. Approved members are added to the whitelist and
+                receive an authorized build.
+            </p>
+            <a class="minecraft-btn inline-block" href="https://discord.gg/MjMnsGhe8T">Join the Discord</a>
+        </div>
+    </div>
+</section>
+
+<!-- Releases Section -->
+<section class="py-20" id="releases">
+    <div class="container mx-auto px-6">
+        <h2 class="text-4xl font-bold text-center mb-16 text-green-500">Latest Releases</h2>
+
+        <!-- Latest Release -->
+        <div class="max-w-4xl mx-auto mb-12">
+            <div class="feature-card p-6 rounded-lg">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-green-400">Latest Release</h3>
+                    <span class="version-tag">v1.0.6</span>
                 </div>
-                
-                <div style="background: var(--bg-primary); padding: 2rem; border: 1px solid var(--border-color); margin-top: 2rem;">
-                    <h3 style="color: var(--primary-color); margin-bottom: 1rem;">Installation Steps:</h3>
-                    <ol style="text-align: left; max-width: 500px; margin: 0 auto;">
-                        <li>Download the latest JAR from releases</li>
-                        <li>Place it in your Meteor Client <code>mods</code> folder</li>
-                        <li>Launch Minecraft and configure via Meteor GUI</li>
-                    </ol>
+                <div class="changelog-item">
+                    <h4 class="font-bold mb-2">What's New:</h4>
+                    <ul class="list-disc ml-4 mb-4">
+                        <li><strong>BetterStashFinder:</strong> An upgraded stash finder with additional filtering
+                            options.
+                        </li>
+                        <li><strong>AutoEnchanter:</strong> Automates enchanting at anvils, saving time.</li>
+                        <li><strong>GrimEfly:</strong> Vanilla efly using a chestplate so that elytra does not use
+                            durability.
+                        </li>
+                        <li><strong>Trident Dupe:</strong> Enables trident duplication (note: patched on most servers).
+                        </li>
+                        <li><strong>AutoFirework:</strong> Automatically triggers firework use for extra flair.</li>
+                    </ul>
+                </div>
+                <div class="changelog-item">
+                    <h4 class="font-bold mb-2">Current Features:</h4>
+                    <ul class="list-disc ml-4 mb-4">
+                        <h5 class="font-semibold mt-2">Utility:</h5>
+                        <li>ActivatedSpawnerDetector: Detects activated spawners nearby</li>
+                        <li>SignHistorian: Record and restore broken or modified signs</li>
+                        <li>ElytraSwap: Automatic elytra management</li>
+                        <li>NoJumpDelay: Removes delay between jumps</li>
+                        <li><strong>GrimEfly:</strong> Vanilla efly using a chestplate so that elytra does not use
+                            durability.
+                        </li>
+
+                        <h5 class="font-semibold mt-2">Exploration:</h5>
+                        <li>Base Finder: Advanced base detection for anarchy servers</li>
+                        <li>NewChunks: Identify newly generated chunks</li>
+                        <li>PortalPatternFinder: Locate broken/removed Nether Portals</li>
+                        <li>CaveDisturbanceDetector: Detect minor cave disruptions</li>
+                        <li>TrailFollower: Follows trails using pitch40 or baritone (Requires XaeroPlus)</li>
+                        <li>Pitch40Util: Height gain and velocity management</li>
+
+                        <h5 class="font-semibold mt-2">Renders:</h5>
+                        <li>Hole, Tunnel, and Stair ESP</li>
+                        <li>PotESP: Decorated Pot tracking</li>
+                        <li>MobGearESP: Player equipment detection on mobs</li>
+                        <li>StackedMinecartDetector: Stacked spawner detection</li>
+                        <li>EntityClusterESP: Entity cluster center point highlighting</li>
+                        <li>DroppedItemESP: Important item highlighting</li>
+
+                        <h5 class="font-semibold mt-2">Automation:</h5>
+                        <li>StorageLooter: Automatically loots containers and organizes items</li>
+                        <li><strong>Trident Dupe:</strong> Enables trident duplication (note: patched on most servers).
+                        </li>
+                        <li><strong>AutoFirework:</strong> Automatically triggers firework use for extra flair.</li>
+                        <li><strong>AutoEnchanter:</strong> Automates enchanting at anvils, saving time.</li>
+                    </ul>
+                </div>
+                <div class="changelog-item">
+                    <h4 class="font-bold mb-2">Known Issues:</h4>
+                    <ul class="list-disc ml-4 mb-4">
+                        <li>Minor rendering glitches during dimension transitions</li>
+                        <li>Rare server-side compatibility issues with certain chunk detection methods</li>
+                    </ul>
+                </div>
+                <div class="mt-6">
+                    <a class="minecraft-btn inline-block"
+                       href="https://github.com/FaxHack/Skylandia/releases/tag/v1.0.6">
+                        Download v1.0.6
+                    </a>
                 </div>
             </div>
         </div>
-    </section>
 
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div>
-                    <p><strong>⚒️ Created by Beelzebub4883</strong></p>
-                    <p style="color: var(--text-secondary); margin-top: 0.5rem;">
-                        Built to explore, automate, experiment, and push Minecraft's limits.
-                    </p>
+        <!-- Previous Releases -->
+        <div class="max-w-4xl mx-auto">
+            <h3 class="text-xl font-bold mb-6 text-green-400">Previous Releases</h3>
+            <div class="grid grid-cols-1 gap-6">
+                <div class="feature-card p-6 rounded-lg">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-lg font-bold">Version 1.0.4</h4>
+                        <span class="version-tag">v1.0.4</span>
+                    </div>
+                    <ul class="list-disc ml-4 mb-4">
+                        <li><strong>StackedMinecartDetector:</strong> Detects if stacked spawner is in the area</li>
+                        <li><strong>EntityClusterESP:</strong> Highlights the centre point of entity clusters</li>
+                        <li><strong>DroppedItemESP:</strong> Highlights important dropped items</li>
+                        <li><strong>ScreenshotFolderCommand:</strong> Open Minecraft screenshot folder</li>
+                        <li><strong>MeteorFolderCommand:</strong> Open meteor-client folder</li>
+                    </ul>
+                    <a class="text-green-400 hover:text-green-500"
+                       href="https://github.com/FaxHack/Skylandia/releases/tag/v1.0.5">View Release &rarr;</a>
                 </div>
-                
-                <div class="footer-links">
-                    <a href="https://discord.gg/MjMnsGhe8T">Discord</a>
-                    <a href="#features">Features</a>
-                    <a href="https://github.com/unaveragetech/Skylandia">GitHub</a>
+
+                <div class="feature-card p-6 rounded-lg">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-lg font-bold">Version 1.0.4</h4>
+                        <span class="version-tag">v1.0.4</span>
+                    </div>
+                    <ul class="list-disc ml-4 mb-4">
+                        <li><strong>TrailFollower:</strong> New trail following system</li>
+                        <li><strong>Pitch40Util:</strong> Advanced height gain management</li>
+                        <li><strong>NoJumpDelay:</strong> Jump delay removal system</li>
+                    </ul>
+                    <a class="text-green-400 hover:text-green-500"
+                       href="https://github.com/FaxHack/Skylandia/releases/tag/v1.0.4">View Release &rarr;</a>
                 </div>
-            </div>
-            
-            <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border-color); color: var(--text-secondary);">
-                <p>Use responsibly. Enjoy the chaos. ⛏️🌌</p>
+
+                <div class="feature-card p-6 rounded-lg">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-lg font-bold">Version 1.0.3</h4>
+                        <span class="version-tag">v1.0.3</span>
+                    </div>
+                    <ul class="list-disc ml-4 mb-4">
+                        <li><strong>SignHistorian:</strong> Record and restore broken or modified signs</li>
+                        <li><strong>ElytraSwap:</strong> Automatic elytra swapping</li>
+                        <li><strong>ActivatedSpawnerDetector:</strong> New configuration options</li>
+                        <li><strong>SkylandiaUtils:</strong> Code refactoring and API fixes</li>
+                    </ul>
+                    <a class="text-green-400 hover:text-green-500"
+                       href="https://github.com/FaxHack/Skylandia/releases/tag/v1.0.3">View Release &rarr;</a>
+                </div>
+
+                <div class="feature-card p-6 rounded-lg">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-lg font-bold">Version 1.0.2</h4>
+                        <span class="version-tag">v1.0.2</span>
+                    </div>
+                    <ul class="list-disc ml-4 mb-4">
+                        <li>Added NewChunks detection system</li>
+                        <li>Improved Base Finder algorithm</li>
+                        <li>Added MobGearESP feature</li>
+                    </ul>
+                    <a class="text-green-400 hover:text-green-500"
+                       href="https://github.com/FaxHack/Skylandia/releases/tag/v1.0.2">View Release &rarr;</a>
+                </div>
+
+                <div class="feature-card p-6 rounded-lg">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-lg font-bold">Version 1.0.1</h4>
+                        <span class="version-tag">v1.0.1</span>
+                    </div>
+                    <ul class="list-disc ml-4 mb-4">
+                        <li>Added PotESP feature</li>
+                        <li>Improved tunnel detection</li>
+                        <li>Fixed compatibility issues</li>
+                    </ul>
+                    <a class="text-green-400 hover:text-green-500"
+                       href="https://github.com/FaxHack/Skylandia/releases/tag/v1.0.1">View Release &rarr;</a>
+                </div>
             </div>
         </div>
-    </footer>
+    </div>
+</section>
 
-    <script>
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
+<!-- Installation Section -->
+<section class="py-20 bg-gray-800" id="installation">
+    <div class="container mx-auto px-6">
+        <h2 class="text-4xl font-bold text-center mb-16 text-green-500">Installation</h2>
+        <div class="max-w-3xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <a class="text-center p-6 feature-card rounded-lg"
+                   href="https://github.com/FaxHack/Skylandia/releases/latest">
+                    <div class="text-3xl mb-4">1</div>
+                    <p>Download the mod from GitHub Releases</p>
+                </a>
+                <div class="text-center p-6 feature-card rounded-lg">
+                    <div class="text-3xl mb-4">2</div>
+                    <p>Place the .jar file in your mods folder</p>
+                </div>
+                <div class="text-center p-6 feature-card rounded-lg">
+                    <div class="text-3xl mb-4">3</div>
+                    <p>Launch Minecraft and enjoy!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-        // Add subtle parallax effect to header
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const parallax = document.querySelector('.header::before');
-            if (parallax) {
-                document.querySelector('.header').style.transform = `translateY(${scrolled * 0.5}px)`;
-            }
-        });
+<!-- Support Section -->
+<section class="py-20" id="support">
+    <div class="container mx-auto px-6">
+        <h2 class="text-4xl font-bold text-center mb-16 text-green-500">Support</h2>
+        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-4 text-green-400">Community</h3>
+                <p class="mb-4">Join our Discord community for help and updates:</p>
+                <a class="minecraft-btn inline-block" href="https://discord.gg/kjjqEgghxj">Join Discord</a>
+            </div>
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-4 text-green-400">Issues &amp; Bugs</h3>
+                <p class="mb-4">Report issues on our GitHub page:</p>
+                <a class="minecraft-btn inline-block" href="https://github.com/FaxHack/Skylandia/issues">GitHub
+                    Issues</a>
+            </div>
+        </div>
+    </div>
+</section>
 
-        // Enhanced scroll animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
+<!-- Footer -->
+<footer class="bg-gray-900 border-t border-green-600 py-8">
+    <div class="container mx-auto px-6">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+            <div class="mb-4 md:mb-0">
+                <p>&copy; 2025 Skylandia. All rights reserved.</p>
+            </div>
+            <div class="flex space-x-6">
+                <a class="hover:text-green-500 transition-colors"
+                   href="https://github.com/FaxHack/Skylandia">GitHub</a>
+                <a class="hover:text-green-500 transition-colors" href="https://discord.gg/kjjqEgghxj">Discord</a>
+                <a class="hover:text-green-500 transition-colors"
+                   href="https://github.com/FaxHack/Skylandia/graphs/contributors">Contributors</a>
+            </div>
+        </div>
+    </div>
+</footer>
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry, index) => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                    
-                    // Add staggered animation delay
-                    /* @tweakable stagger delay for animations */
-                    entry.target.style.animationDelay = `${index * 0.1}s`;
-                    entry.target.classList.add('animate');
-                }
-            });
-        }, observerOptions);
+<script>
+    // Add animated stars to the background
+    const starsContainer = document.getElementById('stars-container');
+    for (let i = 0; i < 50; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = Math.random() * 100 + 'vw';
+        star.style.top = Math.random() * 100 + 'vh';
+        star.style.animationDelay = Math.random() * 2 + 's';
+        starsContainer.appendChild(star);
+    }
 
-        // Enhanced card observation with more dynamic effects
-        document.querySelectorAll('.feature-category, .step').forEach((card, index) => {
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(20px)';
-            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-            /* @tweakable card animation delay multiplier */
-            card.style.animationDelay = `${index * 0.15}s`;
-            observer.observe(card);
-        });
-        
-        // Add floating animation to random elements
-        function addFloatingAnimation() {
-            const elements = document.querySelectorAll('.vision-icon');
-            elements.forEach((el, index) => {
-                /* @tweakable floating animation delay variation */
-                el.style.animationDelay = `${index * 0.5}s`;
-                /* @tweakable floating animation duration variation */
-                el.style.animation = `float ${3 + (index % 3)}s ease-in-out infinite`;
-            });
-        }
-        
-        // Initialize animations after DOM load
-        document.addEventListener('DOMContentLoaded', () => {
-            addFloatingAnimation();
-            
-            // Add typewriter effect restart on visibility
-            const tagline = document.querySelector('.tagline');
-            const taglineObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.animation = 'none';
-                        entry.target.offsetHeight; // Trigger reflow
-                        /* @tweakable typewriter restart animation timing */
-                        entry.target.style.animation = 'typewriter 2s steps(60) 0.5s forwards, blink 1s infinite 2.5s';
-                    }
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
                 });
-            });
-            
-            taglineObserver.observe(tagline);
-        });
-        
-        // Stagger animation for module dialogs
-        document.addEventListener('DOMContentLoaded', () => {
-            const moduleDialogs = document.querySelectorAll('.module-dialog');
-            moduleDialogs.forEach((dialog, index) => {
-                /* @tweakable module dialog stagger delay */
-                dialog.style.animationDelay = `${index * 0.05}s`;
-            });
-        });
-        
-        // Add mouse trail effect
-        let mouseTrail = [];
-        document.addEventListener('mousemove', (e) => {
-            mouseTrail.push({x: e.clientX, y: e.clientY, time: Date.now()});
-            
-            // Limit trail length
-            /* @tweakable mouse trail length */
-            if (mouseTrail.length > 10) {
-                mouseTrail.shift();
             }
-            
-            // Clean old trail points
-            mouseTrail = mouseTrail.filter(point => Date.now() - point.time < 1000);
         });
-    </script>
+    });
+</script>
 </body>
 </html>
