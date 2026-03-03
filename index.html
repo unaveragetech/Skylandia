@@ -25,7 +25,6 @@
     a { color: var(--accent2); text-decoration: none; }
     a:hover { text-decoration: underline; }
 
-    /* HEADER */
     header {
       text-align: center;
       padding: 64px 24px 40px;
@@ -69,7 +68,6 @@
     }
     .badge.cta:hover { opacity: 0.9; }
 
-    /* LAYOUT */
     main { max-width: 1100px; margin: 0 auto; padding: 0 24px 80px; }
     section { margin-top: 60px; }
     h2 {
@@ -82,7 +80,6 @@
     }
     h3 { font-size: 1.05rem; font-weight: 700; color: var(--bright); margin-bottom: 6px; }
 
-    /* CARDS */
     .card-grid {
       display: grid;
       gap: 16px;
@@ -106,7 +103,6 @@
       color: var(--accent2);
     }
 
-    /* WTF MOMENTS */
     .wtf-list {
       display: flex;
       flex-direction: column;
@@ -122,7 +118,6 @@
     }
     .wtf-item strong { color: var(--bright); }
 
-    /* TABLE */
     table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
     th {
       text-align: left;
@@ -135,7 +130,6 @@
     tr:last-child td { border-bottom: none; }
     td:first-child { color: var(--bright); font-weight: 600; }
 
-    /* CODE */
     code {
       background: #1a1a28;
       border: 1px solid var(--border);
@@ -157,7 +151,6 @@
       line-height: 1.8;
     }
 
-    /* ACCESS */
     .access-box {
       background: linear-gradient(135deg, #12101e, #0e1218);
       border: 1px solid var(--accent);
@@ -192,7 +185,6 @@
     }
     .access-step p { margin: 0; font-size: 0.9rem; }
 
-    /* FOOTER */
     footer {
       border-top: 1px solid var(--border);
       padding: 28px 24px;
@@ -208,7 +200,7 @@
   <h1>🌌 Skylandia</h1>
   <p class="tagline">A private Meteor Client addon for Minecraft anarchy and SMP.<br/>Built for Lotus Clan by <strong>Beelzebub4883</strong>.</p>
   <div class="header-badges">
-    <a class="badge" href="https://discord.gg/MjMnsGhe8T">💬 Discord</a>
+    <a class="badge" href="https://discord.gg/bVcSMMMsbm">💬 Discord</a>
     <a class="badge" href="docs/modules.md">📚 Module Catalog</a>
     <a class="badge" href="docs/features/trail-discovery.md">🧭 Trail Discovery</a>
     <a class="badge" href="docs/features/demon-crystal.md">💎 DemonCrystal</a>
@@ -218,10 +210,13 @@
 
 <main>
 
-  <!-- WTF SECTION -->
   <section>
     <h2>Things Skylandia Does That You Haven't Seen Before</h2>
     <div class="wtf-list">
+
+      <div class="wtf-item">
+        <strong>ChunkChestGrid is an obfuscation module — the first of its kind.</strong> Its purpose is to negatively impact enemy stash scanners and tracers by autonomously blanketing a region in a semi-random or configured number of chests. Up to 50&times;50 chunks. Potentially 50,000+ chest placements. Every chest tracer, container scanner, and BetterStashFinder-type tool your enemy runs returns thousands of valid hits — none of which matter. It handles its own wood supply, crafting, and routing so it runs indefinitely while you're offline.
+      </div>
 
       <div class="wtf-item">
         <strong>ElytraSwap repairs your elytras in mid-air without landing.</strong> It throws Bottles o' Enchanting upward at a configured angle so the XP orbs arc back down onto you. When the bottles run out, it opens shulker boxes in your inventory to get more. Your elytra supply manages itself for the entire session.
@@ -229,10 +224,6 @@
 
       <div class="wtf-item">
         <strong>GrimEfly detects portal traps before you fly into them.</strong> On every chunk load, it scans incoming terrain for portal frame structures. If one is within threshold distance of your highway, Baritone reroutes around it before you're ever in range.
-      </div>
-
-      <div class="wtf-item">
-        <strong>ChunkChestGrid handles its own supply chain.</strong> Runs out of chests &rarr; opens your shulker boxes. Those are empty too &rarr; navigates to trees &rarr; chops them &rarr; crafts more chests &rarr; continues the 50&times;50 chunk grid. Seven states. No input required.
       </div>
 
       <div class="wtf-item">
@@ -252,13 +243,12 @@
       </div>
 
       <div class="wtf-item">
-        <strong>Trails fires Discord @mentions for specific chunk types.</strong> Configure a separate Discord webhook and ping ID per type. Flags only <code>TICK_EXPLOIT</code> chunks &mdash; the freshest player signatures on the map &mdash; and pings you directly.
+        <strong>Trails fires Discord @mentions for specific chunk types.</strong> Configure a separate Discord webhook and ping ID per type. Only <code>TICK_EXPLOIT</code> chunks ping you directly.
       </div>
 
     </div>
   </section>
 
-  <!-- FEATURE DEEP DIVES -->
   <section>
     <h2>Feature Deep-Dives</h2>
     <div class="card-grid">
@@ -286,15 +276,14 @@
 
       <div class="card">
         <div class="icon">📦</div>
-        <h3>Shulker Transport</h3>
-        <p>ChunkChestGrid's 7-state wood-crafting-placing supply chain. ShulkerTransportModule's 10-file two-account cross-dimension pipeline with typed rollback. SecureChat 3-channel encrypted coordination.</p>
+        <h3>ChunkChestGrid &amp; Transport</h3>
+        <p>The obfuscation engine: 7-state autonomous supply chain blankets 2,500 chunks with configurable randomized chest patterns to destroy enemy scanner accuracy. Plus ShulkerTransport 10-file pipeline and SecureChat encryption.</p>
         <a href="docs/features/shulker-transport.md">→ Full deep-dive</a>
       </div>
 
     </div>
   </section>
 
-  <!-- MODULE CATEGORIES -->
   <section>
     <h2>Module Categories</h2>
     <table>
@@ -308,7 +297,7 @@
         </tr>
         <tr>
           <td>⚙️ Automation</td>
-          <td>DemonCrystal (50 groups, self-tuning), ChunkChestGrid (7-state supply chain), ShulkerTransportModule (10-file pipeline), AIRraid, AutoPromo (Wither), Printer, Dualist, AreaLoader</td>
+          <td>DemonCrystal (50 groups, self-tuning), ChunkChestGrid (<strong>obfuscation engine</strong> — first of its kind, 2,500-chunk false-positive field), ShulkerTransportModule (10-file pipeline), AIRraid, AutoPromo (Wither), Printer, Dualist, AreaLoader</td>
         </tr>
         <tr>
           <td>🛠️ Utility</td>
@@ -331,7 +320,6 @@
     <p style="margin-top: 14px; font-size: 0.88rem; color: var(--muted);"><a href="docs/modules.md">→ Browse the full catalog with all settings documented</a></p>
   </section>
 
-  <!-- THE PIPELINE -->
   <section>
     <h2>How Modules Talk to Each Other</h2>
     <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 20px;">This is not a collection of isolated features. Systems are designed to feed each other.</p>
@@ -348,10 +336,13 @@ AFKVanillaFly sustains flight through a path
 CoordPoppy maps the operation, overlays Trails types,
     shows TrailFollower's bearing, runs Randar on players,
     syncs everything to swarm-connected accounts every 10s
-    fires Discord webhooks on entity/structure detection</pre>
+    fires Discord webhooks on entity/structure detection
+
+ChunkChestGrid runs overnight on the same region,
+    blanketing it with 50,000+ randomized chest placements
+    so any enemy scanner loading the area sees only noise</pre>
   </section>
 
-  <!-- DEPENDENCIES -->
   <section>
     <h2>Dependencies</h2>
     <table>
@@ -362,7 +353,7 @@ CoordPoppy maps the operation, overlays Trails types,
         <tr><td>Meteor Client</td><td>✅ Yes</td><td>Core framework</td></tr>
         <tr><td>Fabric Loader + MC 1.21.4</td><td>✅ Yes</td><td>Mod loader</td></tr>
         <tr><td>Xaero's Minimap + World Map + XaeroPlus</td><td>Optional</td><td>Trails, BetterStashFinder, CoordPoppy, TrailFollower Destination Mode</td></tr>
-        <tr><td>Baritone</td><td>Optional</td><td>GrimEfly obstacle passer, ChunkChestGrid, TrailFollower Smart mode, SmartActionBot</td></tr>
+        <tr><td>Baritone</td><td>Optional</td><td>GrimEfly obstacle passer, ChunkChestGrid supply chain, TrailFollower Smart mode, SmartActionBot</td></tr>
         <tr><td>Minescript</td><td>Optional</td><td>MinescriptIntegration scripting layer</td></tr>
         <tr><td>Ollama (local)</td><td>Optional</td><td>OllamaBotModule</td></tr>
         <tr><td>HuggingFace API token</td><td>Optional</td><td>JourneyRecorderModule AI generation</td></tr>
@@ -370,7 +361,6 @@ CoordPoppy maps the operation, overlays Trails types,
     </table>
   </section>
 
-  <!-- ACCESS -->
   <section id="access">
     <h2>🔑 Getting Access</h2>
     <div class="access-box">
@@ -379,7 +369,7 @@ CoordPoppy maps the operation, overlays Trails types,
       <div class="access-steps">
         <div class="access-step">
           <div class="step-num">1</div>
-          <p><strong>Join the Discord:</strong> <a href="https://discord.gg/MjMnsGhe8T">discord.gg/MjMnsGhe8T</a></p>
+          <p><strong>Join the Discord:</strong> <a href="https://discord.gg/bVcSMMMsbm">discord.gg/bVcSMMMsbm</a></p>
         </div>
         <div class="access-step">
           <div class="step-num">2</div>
@@ -401,7 +391,7 @@ CoordPoppy maps the operation, overlays Trails types,
 
 <footer>
   <p>Skylandia &mdash; Built for Lotus Clan. Crafted by <strong>Beelzebub4883</strong> &amp; contributors.</p>
-  <p style="margin-top: 6px;"><a href="https://discord.gg/MjMnsGhe8T">Discord</a> &nbsp;&bull;&nbsp; <a href="https://github.com/unaveragetech/Skylandia">GitHub</a> &nbsp;&bull;&nbsp; <a href="docs/modules.md">Module Catalog</a></p>
+  <p style="margin-top: 6px;"><a href="https://discord.gg/bVcSMMMsbm">Discord</a> &nbsp;&bull;&nbsp; <a href="https://github.com/unaveragetech/Skylandia">GitHub</a> &nbsp;&bull;&nbsp; <a href="docs/modules.md">Module Catalog</a></p>
 </footer>
 
 </body>

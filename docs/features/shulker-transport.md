@@ -1,68 +1,109 @@
-# 📦 Shulker Transport + Storage Infrastructure
+# 📦 ChunkChestGrid — Obfuscation Engine
 
-> *One module builds the stash grid. Another fills it. Another repairs the wings that carry the goods. And when you need to move items across dimensions, two accounts coordinate through an encrypted channel with a structured safety handshake.*
+> *Your enemy runs BetterStashFinder. They load in and their scanner lights up. Not because you were sloppy — because you deployed ChunkChestGrid.*
 
 ---
 
-## ChunkChestGrid — The Storage Builder
+## What ChunkChestGrid Actually Is
 
-ChunkChestGrid doesn't just place chests. It runs a **full state machine** that handles every failure case automatically:
+ChunkChestGrid is an **obfuscation module** — the first of its kind in the Minecraft anarchy modding space. Its purpose is not storage. Its purpose is **denial of intelligence**.
+
+Every stash-finding tool your enemies use — chest tracers, container scanners, BetterStashFinder-type modules, and manual coord-sharing — works on the same assumption: *chests in unexplored terrain are stashes*. ChunkChestGrid destroys that assumption. It autonomously carpets a region with a semi-random or precisely configured number of chests per chunk, across up to **50×50 chunks (2,500 total)**, until the scanner noise floor is so high that distinguishing a real stash from a planted false positive becomes computationally and operationally impossible.
+
+**This is what it does to enemy intelligence:**
+- A chest tracer scanning your region returns thousands of hits. Every one is valid. None of them matter.
+- BetterStashFinder-type modules log every container they see. Their log is now 50,000 entries of useless data.
+- Manual coord hunters who want to check "that cluster of chests" now have to check 2,500 clusters.
+- Automated scanners running on alt accounts produce false positives at a rate that kills their signal-to-noise ratio permanently.
+
+The module handles its own supply chain — when it runs out of chests, it opens your shulkers, crafts from planks, or chops trees — so it can **run indefinitely while you're offline**.
+
+---
+
+## The Obfuscation Configuration
+
+### What Makes the Pattern Hard to Filter
+
+The variable chest count per chunk is the key. You configure a `min-chests` and `max-chests` — ChunkChestGrid places a **random number within that range** in each chunk. This means:
+
+- No two chunks have the same chest count
+- There is no geometric regularity an automated filter can lock onto
+- The distribution looks organic, not automated
+- Raised `min-chests` creates denser noise fields; lower `max-chests` with high variability maintains plausible deniability about what is and isn't a real stash
+
+### Placement Patterns
+
+Four patterns control *where within each chunk* chests land:
+
+| Pattern | Effect |
+|---------|--------|
+| `Random` | Chests at arbitrary positions within the chunk. Maximum pattern entropy — hardest to filter programmatically. |
+| `Grid Pattern` | Regular grid within each chunk. Looks like someone organized a storage area. |
+| `Chunk Corners` | Chests placed at corner positions. Matches common manual stash behavior. |
+| `Center Focus` | Weighted toward chunk centers. Mimics organic build patterns. |
+
+For maximum obfuscation, `Random` with high variability in chest count produces the least filterable output. For mimicking real player behavior, `Center Focus` or `Chunk Corners` with mid-range counts is more convincing.
+
+### Routing Modes
+
+| Mode | Behavior |
+|------|----------|
+| `Serpentine` | Row by row, reversing direction each pass — maximum coverage efficiency |
+| `Nearest-First` | Always moves to the closest unfinished chunk — minimizes travel time in irregular terrain |
+| `Adjacent Semi-Random` | Prefers adjacent chunks, randomizes within adjacency — produces the most natural-looking traversal signature |
+
+`Adjacent Semi-Random` is the recommended mode for obfuscation deployments — if someone is watching movement data, the traversal pattern doesn't immediately flag as automated.
+
+---
+
+## The Autonomous Supply Chain
+
+ChunkChestGrid runs a **7-state execution machine** that handles every supply failure without human intervention:
 
 ```
 INITIALIZING
     ↓
 MOVING_TO_CHUNK     ← Baritone or direct movement to next chunk
     ↓
-PLACING_CHESTS      ← Places configured number of containers
+PLACING_CHESTS      ← Places the configured (random) count per chunk
     ↓
-    ↓ (chest count drops below refill-threshold)
-REFILLING_INVENTORY ← Opens shulker boxes in inventory, refills from them
+    ↓ (inventory drops below refill threshold)
+REFILLING_INVENTORY ← Opens shulker boxes, refills from them
     ↓
-    ↓ (shulkers are empty too)
-CRAFTING_CHESTS     ← Opens any available crafting table
+    ↓ (shulkers are empty)
+CRAFTING_CHESTS     ← Opens any available crafting table, crafts from planks
     ↓
-    ↓ (no planks/logs available)
-COLLECTING_WOOD     ← Navigates via Baritone to the nearest trees and chops
+    ↓ (no planks or logs available)
+COLLECTING_WOOD     ← Navigates via Baritone to nearest trees, chops them
     ↓
     ↓ (has logs)
 CRAFTING_CHESTS     ← Crafts logs → planks → chests
     ↓
     ↓ (resupplied)
-MOVING_TO_CHUNK     ← Back to the grid
+MOVING_TO_CHUNK     ← Returns to grid
     ↓
 COMPLETED / ERROR
 ```
 
-This means ChunkChestGrid will: run out of chests → open your shulkers to get more → if those are empty too → go find trees → chop them down → craft more chests → continue the grid. **Without you touching anything.**
+The wood-collecting path means ChunkChestGrid can **start with a completely empty inventory** and still build out a full 50×50 grid — it will simply go cut trees first. This makes it viable as a fire-and-forget deployment: log in, activate, log off. Come back to a region permanently poisoned against chest scanners.
 
-### Grid Configuration
+---
 
-- Grid sizes up to **50×50 chunks** (2,500 chunks total)
-- **Expand on complete** — when the entire grid is done, adds a configurable number of rows to each dimension and continues
-- **Variable chest count** — place a random number of chests per chunk within a min/max range for natural-looking stash distribution
-- **4 placement patterns** — Random, Grid Pattern, Chunk Corners, Center Focus
-- **Per-chunk path optimization** — orders placements within a chunk to minimize walking distance inside it
-- **Row validation** — after completing each row, ChunkChestGrid goes back and checks the prior row's placements and queues any missed chunks for a revisit
-- **Chunk timeout** — if progress stalls in a chunk for configurable seconds, it moves on and comes back later
-- **Skip completed** — detects existing chests in a chunk and skips over it
+## Scale and Coverage Settings
 
-### Routing Modes
-
-| Mode | Behavior |
-|------|----------|
-| `Serpentine` | Row by row, reversing direction each pass — maximum efficiency in a clean grid |
-| `Nearest-First` | Always moves to the closest unfinished chunk — minimizes travel in irregular terrain |
-| `Adjacent Semi-Random` | Prefers adjacent chunks, randomizes within adjacency — natural-looking traversal pattern |
-
-### Baritone Integration
-
-With `use-baritone` enabled, ChunkChestGrid delegates all movement to Baritone's pathfinder. It handles terrain, water, buildings, and obstacles. Without it, movement is direct — faster in open terrain, unreliable in complex environments.
+- **Grid size:** Up to 50×50 chunks — 2,500 chunks, potentially **50,000+ individual chest placements** at max density
+- **Expand on complete:** When the grid finishes, automatically adds configurable rows and continues expanding the denial field
+- **Per-chunk path optimization:** Minimizes walking distance *within* each chunk so placement is fast
+- **Row validation:** After each row, re-checks the prior row for missed chunks and queues them for revisit
+- **Skip completed:** Detects existing chests in a chunk and skips it — avoids redundant work on re-runs
+- **Chunk timeout:** If stuck in a chunk for configurable seconds, moves on and returns later
+- **Baritone integration:** Full Baritone pathfinding for terrain, water, buildings, and obstacles
 
 ---
 
 ## ShulkerTransportModule — Cross-Dimension Logistics
 
-The ShulkerTransport system coordinates two accounts through the `automation/transport/` architecture — a fully modular pipeline with dedicated source files for state, configuration, coordination, and error handling:
+For the times you need to move the *real* stash — not the obfuscation field — ShulkerTransportModule coordinates two accounts through a structured pipeline with typed error handling and rollback:
 
 | Component | Purpose |
 |-----------|--------|
@@ -91,36 +132,29 @@ The ShulkerTransport system coordinates two accounts through the `automation/tra
 
 Timeout thresholds apply to every waiting step. If either account goes silent for longer than the configured timeout, the sequence halts and logs the failure point.
 
-**Rollback** — `TransportException` typed errors trigger rollback logic via `CoordinationManager`. If a step fails partway through, the system attempts to return both accounts to their pre-transfer state.
+**Rollback** — `TransportException` typed errors trigger rollback via `CoordinationManager`. If a step fails partway through, the system attempts to return both accounts to their pre-transfer state.
 
 ### SecureChat — The Coordination Channel
 
-All inter-account communication runs over **SecureChatModule** — Skylandia's encrypted chat layer.
+All inter-account communication runs over **SecureChatModule** — Skylandia's encrypted chat layer:
 
-SecureChat has:
-- **Three named channels** with independent passwords — `general`, `party`, `raid`, or whatever you name them
-- **Active channel switching** — change which channel you send/receive on without reconfiguring
-- **Message chunking** — long messages are split into configurable-size chunks so they don't exceed chat limits
-- **Message prefix** — a configurable prefix identifies encrypted messages so clients can distinguish them from regular chat
-- **Discord webhook** — optionally logs channel passwords and message history to a Discord webhook for audit
-
-The Transporter and Commander run on encrypted channel credentials that no other player on the server can see or decode.
+- **Three named channels** with independent passwords
+- **Active channel switching** without reconfiguring
+- **Message chunking** — splits messages at a configurable character limit so nothing exceeds chat limits
+- **Message prefix** — identifies encrypted traffic to Skylandia clients
+- **Discord webhook** — optionally logs channel passwords and history for audit
 
 ---
 
 ## SmartShulkerManager — Inventory Intelligence
 
-SmartShulkerManager runs alongside ChunkChestGrid and ShulkerTransportModule as a background housekeeping system. It tracks shulker fill levels across your inventory, categorizes contents by item type, identifies which shulkers are ready for deployment (full), which need to be emptied (depleted), and queues them for the transport pipeline automatically.
-
-Instead of manually checking "which shulker has diamonds" — SmartShulkerManager knows, and surfaces that information at the moment it's needed.
+Tracks shulker fill levels across your inventory, categorizes contents by item type, identifies deployment-ready vs depleted boxes, and queues them for the transport pipeline automatically. ChunkChestGrid uses this to know which shulkers contain chests and pull from them in the right order.
 
 ---
 
 ## The Combined Picture
 
-You set up a 20×20 chunk grid. ChunkChestGrid builds it — wood, crafting, routing, Baritone navigation, all automatic. SmartShulkerManager tracks what's stored where. ShulkerTransportModule moves items cross-dimension with encrypted account coordination. And your elytra? ElytraSwap repairs itself mid-air from shulkers in your inventory so you never land.
-
-The infrastructure runs itself.
+You deploy ChunkChestGrid overnight. It blankets a 2,500-chunk region with tens of thousands of chests — random counts, organic placement patterns, all while handling its own supply chain from scratch if necessary. Enemy scanners load into the area and are immediately overwhelmed with noise. Your real stash, hidden somewhere in that region (or nowhere near it), is invisible. SmartShulkerManager tracks your actual inventory. When you need to move items cross-dimension, ShulkerTransportModule handles it through an encrypted two-account handshake. The infrastructure attacks your enemy's intelligence capability and protects your own simultaneously.
 
 ---
 

@@ -74,7 +74,7 @@ Boss kills, dimension changes, and deaths are explicitly exempt from both mechan
 
 ---
 
-## The In-Game Book --- JourneyBookGUI
+## The In-Game Book — JourneyBookGUI
 
 Configurable book cover style, border decoration, X/Y position on screen. Displays the current story as paginated readable text without leaving the game. `clear-actions-on-open` can reset the actions buffer when you open the book so you're always reading the freshest output, not a stale snapshot.
 

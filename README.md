@@ -5,7 +5,7 @@
 </p>
 <p align="center">
   <a href="https://unaveragetech.github.io/Skylandia/">Website</a> •
-  <a href="https://discord.gg/MjMnsGhe8T">Discord</a> •
+  <a href="https://discord.gg/bVcSMMMsbm">Discord</a> •
   <a href="#-getting-access">Get Access</a> •
   <a href="docs/modules.md">Module Catalog</a>
 </p>
@@ -23,9 +23,9 @@
 
 **GrimEfly's Highway Obstacle Passer detects portal traps before you enter them.** On every chunk load, it scans incoming terrain for portal frame structures. If one is within threshold distance of your highway path, Baritone reroutes around it before you're ever in range — automatically.
 
-**ChunkChestGrid builds a 50×50 chunk storage grid and handles its own supply chain.** Runs out of chests → opens your shulker boxes to refill. Those are empty too → goes to find trees → chops them → crafts more chests → continues the grid. Seven states, all automatic. No input required.
+**ChunkChestGrid is an obfuscation module — the first of its kind.** Its purpose is to negatively impact enemy stash scanners and tracers by autonomously blanketing a region in a semi-random or configured number of chests across up to 50×50 chunks. Every tool your enemy uses to find stashes — chest tracers, container scanners, BetterStashFinder-type modules — becomes worthless when there are tens of thousands of identically-structured false positives spread across 2,500 chunks. It handles its own wood supply, crafting, and routing without any input from you.
 
-**DemonCrystal has a self-tuning AI that adjusts its own combat parameters during a fight.** It tracks damage-per-second, success rate, and strategy effectiveness in real time and modifies placement range, rotation speed, burst cooldown, and crystal count automatically based on what the server can handle and what's actually landing. It also runs eight distinct attack strategies (crystal placement, CEV breakin, city mining, surround breaking) and switches between them via a fallback system when the current one loses effectiveness.
+**DemonCrystal has a self-tuning AI that adjusts its own combat parameters during a fight.** It tracks damage-per-second, success rate, and strategy effectiveness in real time and modifies placement range, rotation speed, burst cooldown, and crystal count automatically based on what the server can handle and what's actually landing. It also runs eight distinct attack strategies (crystal placement, CEV breaking, city mining, surround breaking) and switches between them via a fallback system when the current one loses effectiveness.
 
 **Journey Recorder's AI knows who you are.** You provide a user profile prompt (`"I'm a solo stash hunter, I value secrecy over efficiency"`) and a story theme (`"noir"`). The model writes your sessions from your character's perspective, in your genre. With incremental refinement enabled, it rewrites the story as you play so the final output is a cohesive narrative, not a log.
 
@@ -48,7 +48,7 @@ Four systems documented fully from source code — real settings, real integrati
 | [Trail Discovery System](docs/features/trail-discovery.md) | Trails (8 methods, 5 types), TrailFollower, AFKVanillaFly, CoordPoppy (14 subsystems), Detection architecture |
 | [DemonCrystal](docs/features/demon-crystal.md) | 50 setting groups, self-tuning AI, CEV state machine, 8 attack strategies, PlaceData architecture |
 | [Journey Recorder](docs/features/journey-recorder.md) | 20 recording categories, AI persona + genre, incremental refinement, ElytraSwap mid-air repair |
-| [Shulker Transport](docs/features/shulker-transport.md) | ChunkChestGrid 7-state machine, ShulkerTransport pipeline, SecureChat encryption |
+| [Shulker Transport & Obfuscation](docs/features/shulker-transport.md) | ChunkChestGrid obfuscation engine, ShulkerTransport pipeline, SecureChat encryption |
 
 ---
 
@@ -58,7 +58,7 @@ Skylandia has **six module categories**. The [full catalog](docs/modules.md) doc
 
 **🧭 Exploration & Hunting** — Trails, TrailFollower, AFKVanillaFly, CoordPoppy, BetterStashFinder (with 9 structure detectors), SmartActionBot (LLM+Baritone autonomous agent), BaseFinder, CaveDisturbanceDetector, StashBotModule, TerrainAnalyzer, SearchBot, SkyportalFinder.
 
-**⚙️ Automation** — DemonCrystal (50 groups, self-tuning), ChunkChestGrid (7-state supply chain), ShulkerTransportModule (10-file pipeline), AIRraid (aerial TNT), AutoPromo (Wither builder), Printer, SkylandiaHammer, Boomer, AutoEnchant, TridentDupe, Tridentus, Dualist, EndDimensionProcessModule, AreaLoader, SmartShulkerManager.
+**⚙️ Automation** — DemonCrystal (50 groups, self-tuning), ChunkChestGrid (obfuscation engine — first of its kind, 7-state autonomous supply chain, blankets 2,500 chunks with false-positive stash signatures), ShulkerTransportModule (10-file pipeline), AIRraid (aerial TNT), AutoPromo (Wither builder), Printer, SkylandiaHammer, Boomer, AutoEnchant, TridentDupe, Tridentus, Dualist, EndDimensionProcessModule, AreaLoader, SmartShulkerManager.
 
 **🛠️ Utility** — GrimEfly (portal trap detection, obstacle passer, zero elytra durability), ElytraSwap (mid-air repair, shulker bottle extraction, auto-replace), OllamaBotModule (local LLM, 10-msg context, SmartActionBot integration), SecureChatModule (3-channel encrypted coordination), GrimDuraFirework, JourneyRecorderModule, Pitch40Util, InfiniteTools, SignHistorian, TrackerModule, BaritonePathing, Numerology, AutoLoginModule.
 
@@ -96,7 +96,7 @@ Skylandia is **private**. Builds are individually authorized. The mod verifies y
 
 Access is earned through Lotus Clan membership or meaningful contribution — not purchased.
 
-1. **Join the Discord:** [discord.gg/MjMnsGhe8T](https://discord.gg/MjMnsGhe8T)
+1. **Join the Discord:** [discord.gg/bVcSMMMsbm](https://discord.gg/bVcSMMMsbm)
 2. **Participate:** Contribute to the clan, the codebase, or the community.
 3. **Get reviewed:** Leadership extends access to approved members.
 4. **Receive your build:** An authorized JAR with your account registered.
@@ -130,6 +130,6 @@ Access is earned through Lotus Clan membership or meaningful contribution — no
 
 <p align="center">
   <a href="https://unaveragetech.github.io/Skylandia/">Website</a> •
-  <a href="https://discord.gg/MjMnsGhe8T">Discord</a> •
+  <a href="https://discord.gg/bVcSMMMsbm">Discord</a> •
   <a href="docs/modules.md">Module Catalog</a>
 </p>

@@ -102,9 +102,18 @@ Natural language task executor. Maintains a command queue, parses commands (`"wa
 ---
 
 ### ChunkChestGrid
-Full storage infrastructure builder with a 7-state execution machine: INITIALIZING → MOVING_TO_CHUNK → PLACING_CHESTS → REFILLING_INVENTORY → CRAFTING_CHESTS → COLLECTING_WOOD → COMPLETED. It runs out of chests, opens your shulkers, empties those, goes to find trees, chops them, crafts chests, and continues — fully autonomous. 50×50 chunk grid, expand-on-complete, row validation, Baritone navigation, three routing modes, four placement patterns.
+**An obfuscation module — the first of its kind.** Its purpose is to negatively impact enemy stash scanners and tracers by autonomously blanketing a region in a semi-random or configured number of chests per chunk.
 
-[→ Full deep-dive with state machine diagram](features/shulker-transport.md)
+Every automatic stash-finding tool your enemies use assumes *chests in unexplored terrain = stashes*. ChunkChestGrid destroys that assumption at scale:
+- Up to **50×50 chunks** (2,500 total) — potentially **50,000+ chest placements** at max density
+- **Random chest count per chunk** (configurable min/max) — no geometric regularity for automated filters to detect
+- **4 placement patterns** (Random, Grid, Corners, Center Focus) — each mimics different organic behavior
+- **3 routing modes** (Serpentine, Nearest-First, Adjacent Semi-Random) — traversal pattern can look human
+- **7-state autonomous supply chain** — runs out of chests → opens shulkers → crafts from wood → chops trees → continues; operates indefinitely overnight
+- **Expand on complete** — keeps growing the noise field after finishing the initial grid
+- Row validation, per-chunk timeout, skip-completed, Baritone navigation
+
+[→ Full deep-dive with obfuscation strategy and state machine](features/shulker-transport.md)
 
 ---
 
@@ -112,11 +121,6 @@ Full storage infrastructure builder with a 7-state execution machine: INITIALIZI
 Two-account cross-dimension logistics via stasis chambers. Full modular pipeline: `CoordinationManager`, `StasisController`, `InventoryManager`, `CommandSequence`, `TransportCondition`, `TransportAction`, `TransportException` with rollback. Explicit confirmation handshake, item blacklist, encrypted SecureChat inter-account channel, per-step timeouts, typed error rollback.
 
 [→ Full deep-dive](features/shulker-transport.md)
-
----
-
-### AFKVanillaFly
-See Exploration section — this module bridges both categories.
 
 ---
 
@@ -301,4 +305,4 @@ In-game Python script editor and launcher. Write, edit, save, and execute `.py` 
 
 ---
 
-*[Back to README](../README.md) • [Website](https://unaveragetech.github.io/Skylandia/) • [Discord](https://discord.gg/MjMnsGhe8T)*
+*[Back to README](../README.md) • [Website](https://unaveragetech.github.io/Skylandia/) • [Discord](https://discord.gg/bVcSMMMsbm)*

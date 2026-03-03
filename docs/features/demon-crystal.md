@@ -106,7 +106,7 @@ Here's every group and what it controls:
 | ⏰ Timing Settings | Fine-grained timing overrides |
 | 🪜 Step Settings | Step assist behavior during combat |
 | 🔄 Strafe Settings | Strafe boost levels, elytra strafe |
-| 🪨 Burrow+ Settings | Burrow mode (Never/Always/Smart/Burrow/Trap) |
+| 🪸 Burrow+ Settings | Burrow mode (Never/Always/Smart/Burrow/Trap) |
 | 🕳️ Hole Fill Settings | Hole fill targeting (All/Smart/Target) |
 | 🔄 Switching Settings | Item switching (Disabled/Silent/PickSilent/InvSwitch) |
 | 🛡️ OffHand+ Settings | Off-hand item automation |
