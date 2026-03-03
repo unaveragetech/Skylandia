@@ -1,102 +1,126 @@
-# 📦 Shulker Transport System
+# 📦 Shulker Transport + Storage Infrastructure
 
-> *Two accounts. Two dimensions. One automated logistics pipeline.*
-
-Moving items between the Overworld and the End on an anarchy server is one of the most logistically demanding tasks in the game. It requires timing, precision, multi-account coordination, and no room for error.
-
-The Shulker Transport System automates the entire process.
+> *One module builds the stash grid. Another fills it. Another repairs the wings that carry the goods. And when you need to move items across dimensions, two accounts coordinate through an encrypted channel with a structured safety handshake.*
 
 ---
 
-## How It Works
+## ChunkChestGrid — The Storage Builder
 
-Two accounts operate in defined roles:
+ChunkChestGrid doesn't just place chests. It runs a **full state machine** that handles every failure case automatically:
 
-**The Transporter** holds the items and manages physical position in one dimension.  
-**The Commander** coordinates the operation, validates inventories, and authorizes each step.
+```
+INITIALIZING
+    ↓
+MOVING_TO_CHUNK     ← Baritone or direct movement to next chunk
+    ↓
+PLACING_CHESTS      ← Places configured number of containers
+    ↓
+    ↓ (chest count drops below refill-threshold)
+REFILLING_INVENTORY ← Opens shulker boxes in inventory, refills from them
+    ↓
+    ↓ (shulkers are empty too)
+CRAFTING_CHESTS     ← Opens any available crafting table
+    ↓
+    ↓ (no planks/logs available)
+COLLECTING_WOOD     ← Navigates via Baritone to the nearest trees and chops
+    ↓
+    ↓ (has logs)
+CRAFTING_CHESTS     ← Crafts logs → planks → chests
+    ↓
+    ↓ (resupplied)
+MOVING_TO_CHUNK     ← Back to the grid
+    ↓
+COMPLETED / ERROR
+```
 
-The system sequences through a structured handshake:
+This means ChunkChestGrid will: run out of chests → open your shulkers to get more → if those are empty too → go find trees → chop them down → craft more chests → continue the grid. **Without you touching anything.**
 
-1. Transporter signals readiness
-2. Commander validates both inventories against a configurable item blacklist
-3. Commander initiates pearl throw and stasis chamber activation
-4. Stasis controller verifies chamber state before proceeding
-5. Commander authorizes the item transfer
-6. Transporter confirms — explicitly — before execution
-7. Transfer completes; both accounts return to standby
+### Grid Configuration
 
-No step happens automatically without verification of the previous one.
+- Grid sizes up to **50×50 chunks** (2,500 chunks total)
+- **Expand on complete** — when the entire grid is done, adds a configurable number of rows to each dimension and continues
+- **Variable chest count** — place a random number of chests per chunk within a min/max range for natural-looking stash distribution
+- **4 placement patterns** — Random, Grid Pattern, Chunk Corners, Center Focus
+- **Per-chunk path optimization** — orders placements within a chunk to minimize walking distance inside it
+- **Row validation** — after completing each row, ChunkChestGrid goes back and checks the prior row's placements and queues any missed chunks for a revisit
+- **Chunk timeout** — if progress stalls in a chunk for configurable seconds, it moves on and comes back later
+- **Skip completed** — detects existing chests in a chunk and skips over it
 
----
-
-## Safety Design
-
-- Every transfer requires **explicit confirmation** before execution
-- Items on the **blacklist** cannot be transferred — protects valuables from accidental movement
-- If the stasis chamber state is invalid the sequence **stops and holds**
-- Timeout thresholds on every coordinated step — if either account stops responding, the system halts
-- Full **rollback logic** if a step fails partway through
-- Inter-account communication runs over **SecureChat** — the encrypted Skylandia channel
-
----
-
-## ChunkChestGrid — Building the Storage Network
-
-Before you can transport items, you need somewhere to store them. **ChunkChestGrid** builds that infrastructure automatically.
-
-ChunkChestGrid places storage containers in a systematic grid across a configurable area of chunks:
-
-**Grid configuration:**
-- X and Z grid sizes up to 50×50 chunks
-- Expand-on-complete: when the grid is done, automatically adds more rows and continues
-- Variable chest count per chunk (random within a min/max range) or fixed count
-
-**Placement modes:**
+### Routing Modes
 
 | Mode | Behavior |
 |------|----------|
-| `Random` | Scattered placement within the chunk |
-| `Grid Pattern` | Evenly spaced grid within each chunk |
-| `Corners` | Places only at chunk corners |
-| `Center Focus` | Concentrates toward the center of each chunk |
+| `Serpentine` | Row by row, reversing direction each pass — maximum efficiency in a clean grid |
+| `Nearest-First` | Always moves to the closest unfinished chunk — minimizes travel in irregular terrain |
+| `Adjacent Semi-Random` | Prefers adjacent chunks, randomizes within adjacency — natural-looking traversal pattern |
 
-**Routing modes (how it moves between chunks):**
+### Baritone Integration
 
-| Mode | Behavior |
-|------|----------|
-| `Serpentine` | Row by row, reversing direction each pass |
-| `Nearest-First` | Always moves to the closest unprocessed chunk |
-| `Adjacent Semi-Random` | Prefers adjacent chunks with randomized order |
-
-**Inventory management:**
-- Automatically refills from shulker boxes in your inventory when chests run low
-- Optional auto-craft mode: collects wood, crafts chests, continues
-- Tracks current grid state with a HUD overlay
-
-ChunkChestGrid + ShulkerTransportModule is the full stash infrastructure pipeline — build the grid, fill it via automated transfers.
+With `use-baritone` enabled, ChunkChestGrid delegates all movement to Baritone's pathfinder. It handles terrain, water, buildings, and obstacles. Without it, movement is direct — faster in open terrain, unreliable in complex environments.
 
 ---
 
-## SmartShulkerManager
+## ShulkerTransportModule — Cross-Dimension Logistics
 
-A companion module to both ChunkChestGrid and ShulkerTransportModule. Manages the shulker box lifecycle independently: tracks fill levels, sorts contents by category, and flags shulkers ready for transfer or deployment.
+The ShulkerTransport system coordinates two accounts through the `automation/transport/` architecture — a fully modular pipeline with dedicated source files for state, configuration, coordination, and error handling:
+
+| Component | Purpose |
+|-----------|--------|
+| `TransportState.java` | State machine definition |
+| `TransportMode.java` | Transport mode enumeration |
+| `TransportAction.java` | Individual action definitions |
+| `TransportCondition.java` | Pre-condition checks for each action |
+| `CommandSequence.java` | Ordered command sequences |
+| `CoordinationManager.java` | Master coordinator between the two accounts |
+| `InventoryManager.java` | Inventory validation and management |
+| `StasisController.java` | Stasis chamber state management |
+| `TransportConfig.java` | Persistent configuration |
+| `TransportException.java` | Typed error handling and rollback |
+
+### The Handshake Protocol
+
+1. **Transporter** signals readiness via SecureChat
+2. **Commander** validates both accounts' inventories against the configured item blacklist
+3. **Commander** checks stasis chamber state via `StasisController`
+4. If chamber state is invalid → **STOP**. The sequence does not continue.
+5. **Commander** initiates pearl throw and chamber activation
+6. **Commander** authorizes transfer
+7. **Transporter** receives authorization over SecureChat and must confirm — **explicitly** — before execution
+8. Transfer executes
+9. Both accounts return to standby state
+
+Timeout thresholds apply to every waiting step. If either account goes silent for longer than the configured timeout, the sequence halts and logs the failure point.
+
+**Rollback** — `TransportException` typed errors trigger rollback logic via `CoordinationManager`. If a step fails partway through, the system attempts to return both accounts to their pre-transfer state.
+
+### SecureChat — The Coordination Channel
+
+All inter-account communication runs over **SecureChatModule** — Skylandia's encrypted chat layer.
+
+SecureChat has:
+- **Three named channels** with independent passwords — `general`, `party`, `raid`, or whatever you name them
+- **Active channel switching** — change which channel you send/receive on without reconfiguring
+- **Message chunking** — long messages are split into configurable-size chunks so they don't exceed chat limits
+- **Message prefix** — a configurable prefix identifies encrypted messages so clients can distinguish them from regular chat
+- **Discord webhook** — optionally logs channel passwords and message history to a Discord webhook for audit
+
+The Transporter and Commander run on encrypted channel credentials that no other player on the server can see or decode.
 
 ---
 
-## Other Automation Modules
+## SmartShulkerManager — Inventory Intelligence
 
-The Automation category is Skylandia’s largest category. Beyond the transport and crystal systems:
+SmartShulkerManager runs alongside ChunkChestGrid and ShulkerTransportModule as a background housekeeping system. It tracks shulker fill levels across your inventory, categorizes contents by item type, identifies which shulkers are ready for deployment (full), which need to be emptied (depleted), and queues them for the transport pipeline automatically.
 
-### AreaLoader
-Forces chunk loading in a defined area. Used before large builds, mapart preparation, or when you need a region pre-loaded before running other automation modules in it.
+Instead of manually checking "which shulker has diamonds" — SmartShulkerManager knows, and surfaces that information at the moment it's needed.
 
-### AutoEnchant
-Automates the enchanting workflow. Navigates to an enchanting table, selects the configured enchantment target, cycles through enchantments until the desired result appears, uses the enchanting table, then moves to an anvil to combine if needed.
+---
 
-### EndDimensionProcessModule
-Manages the End dimension entry/exit sequence automatically. Handles the respawn screen acknowledgment, ender dragon fight states, and portal positioning for repeatable automated End runs.
+## The Combined Picture
 
-> The Automation category also includes AutoDropDupe, ChristeveDupe, ItemFrameDupe, duprexion, CrashSuite, MassRequester, Dualist, AutoSpeef, Rotation utilities, and more. Each exists for a specific workflow that members of Lotus Clan have needed solved.
+You set up a 20×20 chunk grid. ChunkChestGrid builds it — wood, crafting, routing, Baritone navigation, all automatic. SmartShulkerManager tracks what's stored where. ShulkerTransportModule moves items cross-dimension with encrypted account coordination. And your elytra? ElytraSwap repairs itself mid-air from shulkers in your inventory so you never land.
+
+The infrastructure runs itself.
 
 ---
 

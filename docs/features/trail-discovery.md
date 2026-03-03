@@ -1,118 +1,156 @@
 # 🧭 Trail Discovery System
 
-> *Autonomous exploration that hunts the past while you sleep.*
+> *Log off. Come back to a map full of waypoints, coordinated across multiple accounts, with Discord alerts for every discovery.*
 
-The Trail Discovery System is Skylandia’s flagship exploration capability — a three-module pipeline that turns the chaos of an infinite Minecraft world into a navigable map of player history and forgotten terrain.
-
-Most anarchy tools show you what’s around you. This system **chases what was there before you**.
+This is not a single module. It is a **four-module, multi-subsystem pipeline** where every component talks to every other. Trails classifies. TrailFollower navigates. AFKVanillaFly sustains. CoordPoppy maps, correlates, and coordinates the whole operation across multiple clients.
 
 ---
 
-## The Three Modules
+## Module 1: Trails — Chunk Forensics Engine
 
-### Trails — The Analyst
+Every chunk that loads passes through Trails. It doesn't just flag "new" vs "old" — it assigns one of **five distinct forensic classifications**:
 
-Trails is one of the most technically sophisticated chunk classification engines in any client addon. Every chunk that loads is passed through a configurable set of forensic detectors and assigned one of five distinct types:
+| Type | Meaning |
+|------|---------|
+| `NEW` | Generated post your world border. Nobody has been here. |
+| `OLD` | Pre-dates the current world generation. Could be years untouched. |
+| `BEING_UPDATED` | Actively migrating from <1.17 generation during load — you are watching the past become the present. |
+| `OLD_GENERATION` | Legacy generation signature confirmed by block palette ordering. |
+| `TICK_EXPLOIT` | Flagged via block update timing anomalies — a classic chunk-touch signature. |
 
-| Chunk Type | Meaning |
-|-----------|--------|
-| `NEW` | Generated after the world border was last active — no player has been here |
-| `OLD` | Generated in a previous version, likely untouched for years |
-| `BEING_UPDATED` | Currently migrating from a pre-1.17 generation pattern |
-| `OLD_GENERATION` | Legacy generation signature confirmed by block palette analysis |
-| `TICK_EXPLOIT` | Flagged via block update timing anomalies |
+Each type has **independent colors, notification toggles, Discord webhooks, and per-type render settings**. You can configure it so that *only* `TICK_EXPLOIT` chunks ping your Discord, for example.
 
-Each type is rendered in a distinct configurable color and tracked separately.
+### The Eight Detection Methods
 
-**Detection methods (independently toggleable):**
+You choose which detectors run. Each is independent and can be tuned:
 
-| Method | How it works |
+| Method | How It Works |
 |--------|-------------|
-| **Palette Exploit Detection** | Analyzes the ordering of chunk section block palettes. The order in which blocks appear in a new 1.18+ chunk’s palette is deterministic — if it doesn’t match that signature, the chunk is old or touched. |
-| **Legacy Chunk Update Detection** | Marks chunks migrating from pre-1.17 as `BEING_UPDATED` — these are live conversion events you can watch happen. |
-| **Overworld Old Chunk Detector** | Checks for blocks above Y=0 that only exist in pre-1.17 worlds. If they’re there, the chunk predates the Caves & Cliffs update. |
-| **Nether Old Chunk Detector** | Checks for missing Nether 1.16 blocks. Pre-Nether-Update chunks lack warped/crimson forest terrain. |
-| **End Old Chunk Detector** | Detects chunks biome-typed as `the_end` only — a signature of pre-1.13 End generation. |
-| **Real-Time Detection** | Processes chunk data packets as they arrive for immediate feedback. |
-| **Liquid Exploit Detection** | Infers chunk age from flowing liquid patterns in newly loaded terrain. |
-| **Block Update Exploit Detection** | Tracks block update packets to flag recently touched areas. |
+| **Palette Exploit** | The block palette inside a 1.18+ chunk section is ordered deterministically on first generation. If the order is wrong, the chunk is old or player-touched. This is the most reliable detector for modern servers. |
+| **Legacy Chunk Update** | Marks chunks migrating from pre-1.17 generation in real time as they load. You can watch a 4-year-old world being converted, chunk by chunk. |
+| **Overworld Old Chunk (Pre-1.17)** | Checks for block types above Y=0 that only exist in pre-Caves-and-Cliffs worlds. Finding them in a loaded chunk means it predates the 1.18 generation overhaul. |
+| **Nether Old Chunk (Pre-1.16)** | Checks for the absence of warped/crimson/soul sand valley biome terrain. A missing Nether Update signature. |
+| **End Old Chunk (Pre-1.13)** | Detects the `the_end` biome-only signature of pre-1.13 End generation. |
+| **Real-Time Packet Detection** | Processes `ChunkDataS2CPacket` as it arrives. Classifications appear the moment a chunk loads, not on the next tick. |
+| **Liquid Exploit** | Infers chunk generation age from flowing liquid patterns in terrain. |
+| **Block Update Exploit** | Intercepts `BlockUpdateS2CPacket` and `ChunkDeltaUpdateS2CPacket` to flag recently-modified areas in otherwise old terrain. |
 
-**Additional settings groups:**
-- **Detection Sensitivity** — tune false-positive tolerance per method
-- **Saved / Cached Chunk Data** — persist classifications across sessions
-- **Per-Chunk-Type Settings** — independent color, render, and notification settings per type
-- **Notifications** — Discord webhook integration per chunk type
-- **Performance** — throttle processing to cap CPU impact
+**XaeroPlus cross-reference** — when XaeroPlus is installed, Trails queries `PaletteNewChunks` and `OldChunks` modules for confirmation on ambiguous classifications.
 
-XaeroPlus modules (`PaletteNewChunks`, `OldChunks`) are queried for cross-reference confirmation when available.
+**Session persistence** — chunk classifications survive log-off. The Saved Chunk Data and Cached Chunk Data setting groups control how long data lives and how it is serialized per-dimension.
+
+**Per-type Discord pings** — each chunk type has a configurable Discord ping ID. You can @mention specific team members for specific discoveries.
 
 ---
 
-### TrailFollower — The Strategist
+## Module 2: TrailFollower — Autonomous Navigator
 
-TrailFollower reads the Trails layer in real time and navigates toward it. When player-touched or historically loaded chunks appear, it weighs them against your configured rules and steers you on an optimal bearing — automatically.
+TrailFollower reads the Trails layer in real time and navigates toward it. Think of it as a strategist that *chases the signal*.
 
-When the trail runs cold, it executes a configurable fallback: spiral outward, hold position, return to last known point, or shut down and log your position.
+### What Makes It Different From "Just Flying Forward"
 
-**Key settings:**
-- `visitedChunkInfluence` — ignore, avoid, or prefer already-covered chunks
-- `trailEndBehavior` — what to do when no new trail signal is found
-- `maxTrailDeviation` — hard angle limit before abandoning a bearing
-- `startDirectionWeighting` — bias toward your original heading for organic paths
-- `autoDisconnect` — safety logout if load rate spikes unexpectedly
+**Two movement modes** — `Simple` (reliable direct key presses) or `Smart` (Baritone pathfinding, handles obstacles, terrain, and block placements automatically).
 
----
+**Two flight modes** — `PITCH40` (locks to 40° pitch, integrates with `Pitch40Util` for optimal elytra efficiency) or `VANILLA` (direct velocity control, no pitch constraints, higher raw speed).
 
-### AFKVanillaFly — The Pilot
+**Two firework modes** — `VELOCITY` (fires a firework when speed drops below a configurable threshold) or `TIMED_DELAY` (fires at fixed intervals regardless of speed). Can also run entirely on velocity control with no fireworks required.
 
-Maintains locked-altitude high-speed elytra flight indefinitely without input. Monitors velocity, fires fireworks at the exact moment to avoid speed drop, and can hand control back to TrailFollower after long legs.
+**POI Block Scanning** — you configure a list of *blocks of interest*. When any of those blocks appear in a newly loaded chunk, TrailFollower immediately weights that chunk's bearing more heavily. Hunting for a base that uses obsidian? Add obsidian to the POI list. It steers toward it.
 
----
+**Destination Mode (Xaero Waypoint List)** — instead of trail-following, give it an ordered list of Xaero waypoint names. TrailFollower visits them in sequence, loops at the end if configured, and fires a Discord webhook at each one — with optional fields for waypoint name, completion percentage, distance to next, total waypoint count, coordinates, and timestamp.
 
-## CoordPoppy — The Map Layer
+**Anti-AFK movement randomization** — small variations in speed and direction make the movement pattern appear human-like to server monitoring.
 
-Once the trail pipeline has run, **CoordPoppy** renders it all. CoordPoppy is Skylandia’s advanced minimap system — far beyond what any standard minimap provides:
+**Debug overlays** — direction line, trail path lines with configurable colors, direction arrow, chunk data summary. You can watch the decision-making in real time.
 
-- **Randar exploit integration** — correlates RNG seed output with entity positions to locate players remotely
-- **Remote Entity Detector** — flags entities that shouldn’t be present based on activity patterns
-- **Player Activity Tracker** — logs player presence patterns over time
-- **Trails integration** — overlays NEW/OLD/BEING_UPDATED chunk classifications directly on the map
-- **TrailFollower integration** — shows the follower’s current bearing and target on the map
-- **LocationSpoofer** — masks your real coordinates from server-side queries
-- **ChunkAnalyzer** — processes chunk structure for advanced pattern matching
-- **SwarmIntegration** — coordinate with other Skylandia instances via a shared data channel
-- **Discord webhook support** — auto-alert on significant discoveries
+### Trail End Behaviors
 
-CoordPoppy is its own subsystem with six internal components, making it one of the most capable reconnaissance surfaces in any Minecraft client mod.
+When the trail runs cold: configurable fallback — spiral outward, hold position, return to last known point, or clean shutdown.
 
 ---
 
-## Other Exploration & Hunting Modules
+## Module 3: AFKVanillaFly — The Sustain Engine
 
-The Trail Discovery System and CoordPoppy are the headliners, but the Exploration category contains many more modules:
+AFKVanillaFly doesn't just fly. It **integrates deliberately** with every other exploration module:
 
-### BetterStashFinder
-Scans every incoming chunk’s block entity data for storage containers (chests, barrels, shulker boxes). Also runs asynchronous structure detection: **villages** are flagged by iron golems and villager presence, **trial chambers** by trial spawner entities and Breezes, **dungeons** by spawner type signatures. Player detection fires a Discord webhook with a 5-minute re-alert interval. Auto-screenshots discoverie. Xaero waypoint creation on hit. Runs with a dedicated thread pool so chunk scanning never blocks the main thread.
+- **"Path Through Old Chunks"** — when enabled, AFKVanillaFly queries the Trails module directly and generates a flight path that *routes through old or player-touched chunks*. It's not just going somewhere. It's going somewhere deliberate.
+- **"Respect AreaLoader"** — pauses automatically when AreaLoader is actively preloading a region, preventing conflicts.
+- **Resource monitoring** — watches both firework count and elytra durability. Warns or auto-disables when either runs low, preventing a mid-flight crash 10,000 blocks from spawn.
+- **Auto-land at final waypoint** — descends and lands cleanly instead of cutting flight and falling.
+- **Auto-resume** — if interrupted (login, disconnect, knockback), resumes the path from where it stopped.
+- **Obstacle avoidance** — detects blocks in the flight path ahead and pauses or reroutes rather than slamming into terrain.
 
-### SmartActionBot
-Natural language command executor. Accepts commands like `"walk to 100 64 200"` via an internal queue, parses them, and executes through Baritone navigation + input simulation. Simultaneously handles inventory management, food/health monitoring, and basic combat while traveling. Built with an LLM integration stub — commands can be fed from chat, from an external socket, or from OllamaBotModule. Visited-position tracking prevents loops.
+---
 
-### BaseFinder
-Detects base-like structures from block density and entity patterns in loaded chunks. Scores candidate positions and logs high-confidence hits with coordinates and confidence rating.
+## Module 4: CoordPoppy — The Intelligence Layer
 
-### CaveDisturbanceDetector
-Flags terrain that shows signs of player interaction: placed torches, non-natural block transitions, cleared cave sections. Useful for following fresh trails downward.
+CoordPoppy is a full reconnaissance surface built on top of everything else. It has 14 subsystem files.
 
-### StashBotModule
-Automated stash logging pipeline. Receives hits from BetterStashFinder, writes them to a local log with timestamp and dimension, creates Xaero waypoints, and fires configurable Discord alerts.
+### Randar Exploit Integration
 
-### TerrainAnalyzer
-Profiles terrain across the loaded area for travel efficiency, choke-point mapping, and PvP positioning. Outputs a scored summary you can act on.
+You provide the server seed. `CoordPoppy` uses it to correlate the server's pseudorandom number generator output (observable via entity spawn positions) with predicted positions of *other* entities — including players. Without ever seeing them. Without them moving. The `RemoteEntityDetector` flags anomalies and the `PlayerActivityTracker` logs their presence history over time.
 
-### SearchBot
-Grid, spiral, and configurable-path automated area searching. Navigates a defined bounding box systematically, logs discovered items and structures, and stops on configurable trigger conditions.
+### Swarm Integration
 
-> These are the modules in the Exploration & Hunting category. Each is independently configurable and many interconnect — BetterStashFinder feeds StashBotModule, Trails feeds TrailFollower and CoordPoppy, SmartActionBot can be driven by OllamaBotModule.
+CoordPoppy integrates with Meteor Client's Swarm system. Running two accounts? Three? All of them share their map data with each other every 10 seconds — chunk classifications, entity positions, waypoints. One account finds a stash. Every client on the swarm knows about it immediately.
+
+### Full Subsystem List
+
+| Subsystem | Role |
+|-----------|------|
+| `MapRenderer` | Custom minimap rendering layer |
+| `BlockColorPalette` | Maps block types to configurable render colors |
+| `ChunkAnalyzer` | Deep chunk pattern analysis beyond Trails' classification |
+| `LocationSpoofer` | Masks real coordinates from server-side queries |
+| `RemoteEntityDetector` | Flags entities that shouldn't exist based on activity patterns |
+| `PlayerActivityTracker` | Builds a presence history log for observed players |
+| `TrailsIntegration` | Overlays Trails chunk classifications on the map |
+| `TrailFollowerIntegration` | Shows TrailFollower's current bearing and target on the map |
+| `XeroIntegration` | Pulls data from and pushes to Xaero's Minimap |
+| `SwarmIntegration` | Multi-instance data sharing via Meteor Swarm |
+| `FilteringSystem` | Filters what entities, blocks, and events appear on the map |
+| `SwarmMapData` | Data model for swarm-shared map state |
+
+CoordPoppy has setting groups for: Map Appearance, Map Position, Stats UI Position, Proximity Detection, Mob Selection, Webhooks, Beacon Placement, Chunk Visualization, Entity Tracking, Advanced Mapping, Swarm Integration, Remote Scanning, Player Tracking, Filtering & Search.
+
+---
+
+## The Detection Subsystem (BetterStashFinder's Engine)
+
+BetterStashFinder's structure detection runs through a dedicated architecture under `modules/exploration/detection/`:
+
+| Detector | What It Finds |
+|----------|---------------|
+| `BedrockStaircaseDetector` | Bedrock staircase patterns — a classic anarchy base signature |
+| `PistonDoorDetector` | Hidden piston doors in terrain — someone built a hidden entrance |
+| `PortalFrameDetector` | Nether portal frame structures |
+| `TunnelDetector` | Artificial tunnels carved through stone |
+| `TunnelEntranceDetector` | The mouth of a tunnel, even when the tunnel continues beyond chunk range |
+| `VillageAnomalyDetector` | A village that's been modified — signs of player habitation |
+| `VillageHouseDetector` | Individual village building structural matches |
+| `DungeonDetector` | Mossy cobblestone + spawner signature |
+| `TrialChamberDetector` | Trial spawner + Breeze entity presence |
+
+All of these feed into `DetectionManager` → `StructureDetectionManager` → BetterStashFinder's stash log → Xaero waypoints → Discord webhook.
+
+---
+
+## The Full Pipeline
+
+```
+Trails classifies every loaded chunk
+    ↓ feeds bearing weights to
+TrailFollower steers toward old/touched terrain
+    ↓ hands long legs to
+AFKVanillaFly sustains flight along a path through old chunks
+    ↓ all three feed data to
+CoordPoppy maps the operation, overlays Trails types,
+    shows TrailFollower's bearing, runs Randar on known players,
+    shares everything to swarm-connected accounts,
+    fires Discord webhooks on discovery
+```
+
+You run this overnight. You wake up to a map covered in flagged chunks, structure detections, and Discord pings with coordinates.
 
 ---
 

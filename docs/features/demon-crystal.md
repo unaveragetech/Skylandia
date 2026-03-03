@@ -1,70 +1,154 @@
 # 💎 DemonCrystal
 
-> *End Crystal PvP, fully automated. Every placement, every break, every decision — handled.*
-
-Crystal PvP is the highest skill ceiling in Minecraft combat. It rewards reaction speed, positioning discipline, crystal timing, and target prediction — simultaneously. Most players spend months developing muscle memory for it.
-
-DemonCrystal puts that muscle memory in a module.
+> *Not a crystal aura. A combat operating system with 50 setting groups, a self-tuning AI, real-time strategy switching, and a CEV state machine that runs while you do nothing.*
 
 ---
 
-## What It Does
+## What You Need to Understand First
 
-DemonCrystal automates the complete crystal PvP loop:
+Most crystal clients have one loop: find target → place crystal → break crystal. DemonCrystal has **eight distinct attack strategies** that it switches between based on a live effectiveness scoring system:
 
-- **Target acquisition** using configurable priority rules — closest, lowest health, highest potential damage, least armor.
-- **Movement prediction** up to 60 ticks ahead so crystals land where the player *will be*, not where they are now.
-- **Crystal placement** in configurable geometric patterns: surrounding, cross, diamond, or pure damage maximization.
-- **Burst breaking** with existence verification and anti-ghost logic — no wasted attacks on crystals already gone.
-- **Dynamic target switching** when a better opportunity opens mid-fight.
-- **Full safety suite** — anti-suicide, totem monitoring, durability checks, emergency shutdown.
+| Strategy | What It Does |
+|----------|--------------|
+| `CRYSTAL_PLACEMENT` | Standard box-scan placement with damage prediction |
+| `CEV_BREAKING` | Cev trap cycle: places trap block, places crystal, breaks the block, breaks the crystal, retraps |
+| `CITY_MINING` | Mines the blocks around a target to expose crystal positions that normally couldn't exist |
+| `SURROUND_BREAKING` | Breaks the target's own surround to open crystal opportunities |
 
----
-
-## Multi-Crystal Modes
-
-| Mode | What it does |
-|------|--------------|
-| **Dual** | Two crystals per sequence for pressure and spacing control |
-| **Triple** | Three-point setups that corner targets |
-| **Quad** | Maximum coverage, maximum damage, minimum time to pop |
-| **Adaptive** | Picks count dynamically based on target health, distance, and open positions |
-| **Burst** | Rapid-fire multi-crystal detonation sequence |
+A `FallbackLogic` system with states `EVALUATING → ATTEMPTING → SWITCHING → FAILED → SUCCESS` automatically rotates through strategies when the current one stops working — no manual reconfiguration mid-fight.
 
 ---
 
-## Setting Categories (15 total)
+## The Self-Tuning System
 
-DemonCrystal exposes 15 organized setting groups covering every aspect of the fight loop: target acquisition, placement geometry, break timing, burst behavior, anti-ghost, safety thresholds, totem handling, render options, and more. Most players use the defaults for general fights and tune individual thresholds for specific server anti-cheat profiles.
+This is the part that makes DemonCrystal different. It is not static.
+
+The module maintains two live data structures:
+
+**`PerformanceMetrics`** — tracked per session:
+- Total damage dealt
+- Crystals placed / broken
+- Successful hits / total attempts
+- Average damage-per-second
+- Success rate
+
+**`StrategyEffectiveness`** — tracked per attack strategy:
+- Total damage from this strategy
+- Times used / times succeeded
+- Time spent per use
+- Average effectiveness score (success rate × damage/second)
+
+The `Self-Tuning & Optimization` setting group turns these metrics into automatic adjustments:
+- **Rotation speed** adjusts based on placement accuracy
+- **Placement range** adjusts based on placement success rate
+- **Crystals per tick** reduces if placements trigger anti-cheat patterns
+- **Burst cooldown** lengthens if the server struggles with the rate
+- **Crystal count** (in multi-crystal mode) adjusts based on what the server can keep up with
+- **Strategy selection** weights toward whichever attack type has the highest current effectiveness score
+
+Enable `Demon Mode` and self-tuning together and the module *learns the fight*. It starts conservative, measures what works, and ramps aggression in real time.
 
 ---
 
-## Other Automation Modules
+## Movement Prediction
 
-DemonCrystal is one of many automation modules in Skylandia’s combat and automation category:
+**`PredictiveData`** tracks per target:
+- `lastPosition` — Vec3d
+- `velocity` — Vec3d
+- `predictedPosition` — Vec3d
 
-### AIRraid
-Aerial TNT bombing automation. Monitors your altitude and flight state — only activates above a configurable Y level (default 120) while elytra-flying and moving horizontally. Automatically switches to the TNT hotbar slot, places the block, then switches to flint-and-steel to ignite before returning to normal loadout. Lets you carpet-bomb targets while flying over them with zero manual slot management.
+Configurable up to 60 ticks of lookahead. The module places crystals where the target **will be**, accounting for their current velocity vector. Against a target running in a straight line at full speed, this means the crystal lands before they arrive.
 
-### AutoPromo (Wither Builder)
-Fully automates summoning Withers. Scans a configurable horizontal/vertical radius for valid Wither construction positions, places soul sand in the correct T- or + pattern, and optionally names the spawned Wither using a name tag from your inventory. Settings include placement delay, block delay, rotation assist, and a `turn-off-after-one` mode. Useful for wither-based griefing workflows or farming Nether Stars without touching the keyboard.
+Self-tuning adjusts prediction ticks based on measured accuracy — if predictions are consistently off, it reduces lookahead. If they're consistently accurate, it extends it.
 
-### Boomer
-TNT placement and detonation automation for large-scale destruction sequences. Configure placement patterns, ignition timing, and abort conditions.
+---
 
-### Printer
-Schematic-based automated block placement. Feed it a schematic and a block supply and it builds the structure while you stand still or AFK.
+## The CEV System in Detail
 
-### SkylandiaHammer
-Large-area systematic mining automation with configurable area bounds and tool management.
+CEV (Crystal-Exploit-Vulnerability) is one of the highest-damage crystal PvP techniques. DemonCrystal's CEV state machine:
 
-### ChunkChestGrid
-Places storage containers in a configurable grid across multiple chunks — up to 50×50 chunks, multiple routing modes, variable or fixed chests per chunk, expand-on-complete, and optional auto-craft from harvested wood. See the [full deep-dive](../features/shulker-transport.md) for logistics context.
+```
+IDLE → TRAP_BLOCK → PLACE_CRYSTAL → BREAK_BLOCK → BREAK_CRYSTAL → RETRAP → COOLDOWN → IDLE
+```
 
-### TridentDupe / Tridentus
-Trident duplication pipeline and automated trident-based travel and combat. Tridentus extends this into a full aura/travel hybrid.
+Each transition is automatic. The module places the trap block, immediately places a crystal on the obsidian adjacent to it, breaks the trap block to expose the target to the crystal, detonates, and retraps — all within the space of a few ticks. The `Cev Breaker` and `Anti-Cev Defense` setting groups let you both run CEV offensively *and* protect yourself from opponents running the same technique.
 
-> The Automation category contains additional modules including ChristeveDupe, AutoDropDupe, ItemFrameDupe, duprexion, AutoSpeef, Dualist, Rotation utilities, and more.
+---
+
+## The 50 Setting Groups
+
+Here's every group and what it controls:
+
+| Group | Purpose |
+|-------|---------|
+| 🔑 PvP Keybinds | Manual mining keybind — hold to allow block mining during placement |
+| Core | Master switches: Demon Mode, Hyper Aggressive, Self-Tuning, Auto Gap |
+| 🎯 Combat Targeting | Target range, priority (Closest/Health/Damage/Smart), foot targeting, face-place mode, face-place health threshold |
+| ⚡ Combat Performance | Rotation mode/speed, max ops/tick, burst mode, burst duration/cooldown |
+| 💎 Crystal Placement | Enable/disable, range, walls range, min damage, max self damage, crystals/tick, delay |
+| 💥 Crystal Breaking | Enable/disable, range, walls break range, min damage break, crystals break/tick, delay |
+| ⚔️ Advanced Crystal Combat | Advanced techniques |
+| 📐 Placement Settings | Aggressive mode toggle |
+| 💎 Multi-Crystal | Enable, max crystals, simultaneous placement count |
+| 🪤 Trapping | Trap block placement for CEV setups |
+| 🔮 Auto Pearl | Automatic ender pearl use for repositioning |
+| 🧱 Block Placement | Obsidian/block auto-placement settings |
+| ⛏️ Block Mining | Settings for city mining and surround breaking |
+| 🛡️ Block Defense | Defensive surround block placements |
+| 🏙️ City Mining | City target identification and mining patterns |
+| 🏃 Movement Core | Basic movement behavior during combat |
+| 🎮 Advanced Movement | Strafe modes (None/Low/Medium/High/Damage/Elytra), movement vectors |
+| 🛡️ Movement Safety | Active-when modes (Always/InHole/OnGround/Sneaking/NotSneaking) |
+| 🤖 Automation Systems | Full automation pipeline control |
+| 🧠 AI & Self-Tuning | Aggressiveness multiplier, self-tuning master toggle |
+| 🚨 Safety & Emergency | Anti-suicide threshold, emergency disable conditions |
+| 🔧 Armor Mending | Mending rotation modes (None/LookDown/LookUp/LookAtFeet) |
+| ⏰ Timing Settings | Fine-grained timing overrides |
+| 🪜 Step Settings | Step assist behavior during combat |
+| 🔄 Strafe Settings | Strafe boost levels, elytra strafe |
+| 🪨 Burrow+ Settings | Burrow mode (Never/Always/Smart/Burrow/Trap) |
+| 🕳️ Hole Fill Settings | Hole fill targeting (All/Smart/Target) |
+| 🔄 Switching Settings | Item switching (Disabled/Silent/PickSilent/InvSwitch) |
+| 🛡️ OffHand+ Settings | Off-hand item automation |
+| ❤️ OffHand Health | Totem/gap health monitoring |
+| 🎨 Render Settings | Crystal position rendering, colors |
+| ⚡ Fast Use Settings | Fast item use timing |
+| ⚓ Hole Anchor Settings | Snap to hole behavior |
+| 🧲 Hole Snap Settings | Snap modes (Teleport/Move/Both/Yaw) |
+| ⚡ Performance Settings | Processing limits per tick |
+| 🎯 Targeting Settings | Extended targeting configuration |
+| 🎨 Visual & Rendering | Full render pipeline settings |
+| 🔧 Debug & Diagnostics | Debug output and diagnostics |
+| 🛡️ Surround System | Surround mode (Auto/Manual/KeybindOnly), patterns (4-block/8-block extended) |
+| 🧨 Cev Breaker | Offensive CEV configuration |
+| 🧯 Anti-Cev Defense | Defensive counter to opponent CEV |
+| 🛠️ Advanced City Mining | Extended city mining configuration |
+| 🛡️ Inhibit System | Action inhibition conditions |
+| 🧱 Anti-City Defense | Counter to opponent city mining |
+| 🌫️ Air Placing | Crystal placement without ground contact |
+| 🔄 Fallback Logic | Strategy rotation and fallback configuration |
+| 🎯 Self-Tuning & Optimization | Full self-tuning behavior configuration |
+
+---
+
+## Rebreak Logic
+
+The module maintains a live set of block positions it has mined (tracked with a 7-second expiry). If an opponent places a block back onto a position you just cleared, DemonCrystal detects it on the next tick and re-mines it. You can't be out-placed on positions you've already claimed in a fight.
+
+---
+
+## PlaceData Architecture (ThunderCrystal-Inspired)
+
+Every possible placement position is evaluated as a `PlaceData` object:
+```
+BlockPos pos
+double damage      → projected damage to target
+double selfDamage  → projected damage to self
+```
+
+A spherical box scan (`getPossibleBlocksBox()`) evaluates every valid position within range. `filterBestPosition()` applies the damage thresholds, anti-suicide check, and max self-damage cap, then picks the globally best option. In multi-crystal mode, it then iterates remaining positions and places additional crystals in damage order up to the configured maximum.
+
+This means DemonCrystal doesn't commit to the first valid position. It surveys every position simultaneously and picks the mathematically optimal placement on every single tick.
 
 ---
 

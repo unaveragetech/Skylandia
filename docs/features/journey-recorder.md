@@ -1,86 +1,114 @@
 # 📖 Journey Recorder
 
-> *Your adventures, written by AI. Every session becomes a story worth reading.*
-
-Most of what happens in Minecraft disappears when you log out. Journey Recorder fixes that — and goes further, turning raw gameplay data into readable narrative using AI.
+> *Your sessions become stories. Your character has a voice. The AI knows who you are, what you care about, and writes in your genre.*
 
 ---
 
 ## What It Records
 
-Journey Recorder tracks your session in real time across six data layer types:
+Journey Recorder is not a position logger. It tracks **contextually enriched events** across 20 independently toggleable recording categories:
 
-- **Movement** — direction, biome, height, origin distance, speed profile
-- **Mining and gathering** — block type, depth, session cumulative count, rarity context
-- **Combat** — entity type, location, kill count, PvP vs mob flag
-- **Dimension transitions** — every portal, End gateway, Nether crossing with entry/exit coordinates
-- **Deaths and respawns** with cause and location
-- **Notable discoveries** — rare blocks, boss encounters, structure entries
-
----
-
-## How Stories Are Generated
-
-When you trigger generation, Journey Recorder sends annotated session data to a HuggingFace AI model configured in your settings. The annotations include biome readable names (not internal IDs), kill counts for combat context, height classification for underground vs. surface distinction, and distance-from-origin for narrative scale.
-
-The AI receives enough context to write something worth reading rather than a timestamped log.
-
----
-
-## Smart Deduplication
-
-Raw gameplay produces noise. Journey Recorder consolidates it:
-
-- Movement entries within a time window are merged into directional summaries
-- Repeated similar actions aggregate with a count
-- Boss kills, dimension changes, and deaths bypass deduplication and are always preserved
+| Category | What Gets Logged |
+|----------|------------------|
+| **Movement** | Direction, biome, height, distance from session origin — not just "moved 200 blocks" but *where, through what, from how far* |
+| **Flying** | When elytra flight starts and stops, altitude context |
+| **Sprinting** | Distance sprinted with terrain context |
+| **Swimming** | Swimming distance with water type |
+| **Blocks Broken** | Type, depth, with *valuable block highlighting* (diamonds, ancient debris, amethyst) |
+| **Blocks Placed** | Type and location |
+| **Rare Items** | Item pickups flagged as rare/valuable get separate treatment |
+| **Combat** | Every kill and death with location and cause |
+| **PvP Specifically** | Player kills logged separately from mob kills |
+| **Mob Kills** | Hostile mob kills with accumulated session count |
+| **Boss Kills** | Ender Dragon, Wither — always preserved regardless of deduplication |
+| **Deaths** | Cause of death and coordinates |
+| **Crafting** | Key crafting events |
+| **Dimension Changes** | Every portal, End gateway, Nether crossing — with entry and exit coordinates |
+| **Biome Changes** | Every new biome entered, readable name (not internal ID) |
+| **Structures** | Entering villages, temples, dungeons, other structures |
+| **Villages** | Village discovery with villager/golem count |
+| **Distance Stats** | Total distance from session start — fed to AI for narrative scale |
+| **Time Stats** | Total time played in session |
+| **Milestones** | Achievement-style tracking |
 
 ---
 
-## Output and Storage
+## The AI Layer — More Than "Generate a Story"
 
-- Stories save to text files in your Minecraft folder
-- Append mode (chapters accumulate) or overwrite mode (per-session fresh start)
-- Raw action log always saved in JSON for re-generation or external use
+### You Give It Your Character
 
-**JourneyBookGUI** — a separate in-game GUI module — lets you browse and read saved journey files without leaving the game. Presents stories as readable books with pagination.
+The `user-profile-prompt` setting is a free-text field: *"I'm a solo anarchy player who builds stashes in the deep ocean and never PvPs unless provoked. I value secrecy over efficiency."* The AI includes this in its prompt. The story it generates is written from **your character's perspective**, not a generic narrator's.
 
-**AIStoryGenerator** is the backend component that manages the HuggingFace API connection, model selection, prompt templating, and response parsing independently from the recorder.
+### You Give It a Genre
+
+The `story-theme` setting is another free-text field: `"noir"`, `"whimsical"`, `"horror"`, `"military report"`. The model writes in that register. A night of combat mining in the deep slate reads differently as noir vs. military report vs. horror.
+
+### It Writes While You Play
+
+**Incremental refinement mode** changes the generation pipeline entirely. Instead of waiting until the end of a session:
+
+1. Every `refinement-batch-size` actions, the model generates an intermediate narrative segment
+2. If `auto-integrate-segments` is enabled, the model then **rewrites the entire story so far** to integrate the new segment — adjusting pacing, resolving narrative gaps, maintaining voice consistency
+3. At the end, the story is already cohesive — not a list of events stapled together
+
+Each refinement pass has its own configurable temperature and max tokens, separate from the main generation settings.
+
+### Discord Webhooks for Every Story
+
+- `webhook-on-story` — fires when a story segment is generated, sends the narrative text to Discord
+- `webhook-on-raw-data` — also sends the raw JSON action log for archival or external processing
+
+The full journey book appears in your Discord channel. No file extraction needed.
 
 ---
 
-## Setup
+## Deduplication Engine
 
-You need a HuggingFace account (free tier works) and an API token. Set the token once in module settings or via environment variable. Points at any compatible model.
+Raw gameplay is noise. The deduplication system has two mechanisms:
+
+**Similarity window** — a configurable time window (in seconds) where similar action types are checked for repetition. "Traveled north" for the 40th consecutive tick doesn't get logged 40 times.
+
+**Aggregate similar** — combines repetitive entries into a single counted entry: `"3× traveled 100 blocks north through forest"` instead of three separate movement entries. The AI gets count context without reading 40 identical lines.
+
+Boss kills, dimension changes, and deaths are explicitly exempt from both mechanisms — they always appear in full.
 
 ---
 
-## Other Utility Modules
+## The In-Game Book --- JourneyBookGUI
 
-Journey Recorder lives in Skylandia’s Utility category alongside an unusually deep set of companion modules:
+Configurable book cover style, border decoration, X/Y position on screen. Displays the current story as paginated readable text without leaving the game. `clear-actions-on-open` can reset the actions buffer when you open the book so you're always reading the freshest output, not a stale snapshot.
 
-### GrimEfly
-Chestplate-based elytra flight that uses the bounce exploit to stay airborne without equipping an elytra — meaning **your elytra never takes durability**. Settings include bounce auto-mode with configurable pitch lock (default 90°) and yaw lock, a custom yaw mode for non-45° angles, and an **Obstacle Passer** subsystem that handles terrain interruptions mid-flight. Integrates with Baritone for ground-rerouting when ceilings are too low.
+---
 
-### ElytraSwap
-Intelligent elytra durability manager. Monitors equipped elytra durability and warns at a configurable threshold. **Auto-replace** swaps in a fresh elytra from your inventory when durability drops below a second threshold, without interrupting flight. **Elytra Fixer** automatically repairs all damaged elytras in your inventory using Bottles o’ Enchanting when they cross a durability floor. Also handles held-elytra swapping for the GrimEfly workflow.
+## ElytraSwap — The Module That Keeps You Flying Long Enough to Record Anything
 
-### OllamaBotModule
-In-game AI chat assistant via a local [Ollama](https://ollama.com/) instance. Listens for a configurable trigger prefix (default `!ask`) in chat and routes the message to your local LLM via the Ollama API at `localhost:11434`. Maintains a 10-message rolling context window so multi-turn conversations work naturally. Configurable system prompt for personality, respond-to-all mode, whitelist of allowed users, and a model refresh button that queries Ollama for available models. Runs on a two-thread executor so the game never blocks waiting for a response.
+Journey Recorder pairs naturally with ElytraSwap, which is one of the most underrated modules in the utility category. Here's what it actually does:
 
-### SecureChatModule
-Client-side encrypted messaging layer over the standard Minecraft chat channel. Encrypts outgoing messages and decrypts incoming ones for other Skylandia users on the same key. Also hosts custom chat filter rules. Used by ShulkerTransportModule for inter-account coordination.
+### Durability Warning and Auto-Replace
 
-### GrimDuraFirework
-Conserves elytra durability under Grim anti-cheat by intelligently timing firework use to avoid the server-side durability deduction window. Necessary for long-distance flight on Grim-protected servers.
+Monitors equipped elytra durability. At a configurable threshold, it warns you. At a second, lower threshold, if `auto-replace` is enabled, it **swaps in a fresh elytra from your inventory without interrupting flight**. You never notice. The broken elytra goes to inventory and a new one appears on your back.
 
-### AutoLoginModule
-Automates the login sequence on servers that require `/login <password>` or similar commands after connect. Configurable command and delay. Pair with the proxy settings for full automated reconnect.
+### Elytra Fixer — Repairs Themselves
 
-### Numerology
-Coordinate analysis and mathematical utility module for seed-based location calculations and Randar-compatible coordinate math.
+When you have Bottles o' Enchanting in your inventory, the **Elytra Fixer** sub-group watches all elytras that fall below a configurable durability floor and throws bottles at them automatically to repair them.
 
-> The Utility category also contains ActivatedSpawnerDetector, BungeeSpoofer, EnchantedAnvil, Firework, InfiniteTools, Pitch40Util, SignHistorian, TrackerModule, BaritonePathing, ServerScannerModule, and more.
+When the bottles run out:
+- `auto-find-shulkers` — scans within a configurable range for shulker boxes and opens them to extract more bottles
+- `inventory-shulker-mode` — opens shulker boxes from your inventory to get more bottles
+
+Your supply of elytra is self-sustaining as long as you hold shulkers stocked with experience bottles.
+
+### Mid-Air Repair Without Landing
+
+This is the one that does it. `enable-mid-air-fix` allows repairing elytras **while flying**, without ever touching the ground:
+
+**Platform mode** — places a temporary block above or below you, lands on it, runs the repair sequence, then `auto-break-platform` removes the block. You were never on the ground.
+
+**Bottle-throw mode** — throws Bottles o' Enchanting upward at a configurable angle so they arc overhead and XP orbs fall on you mid-flight. Configure the throw angle (`throw-angle`), how many to throw before looking down to collect (`bottles-before-collect`), and how long to look down collecting orbs (`collect-duration` in ticks).
+
+`auto-trigger-mid-air-fix` fires automatically when the number of broken elytras in your inventory hits a threshold. SafeWalk toggle during platform fixing prevents falling off your own platform.
+
+With ElytraSwap running alongside Journey Recorder and AFKVanillaFly, your elytra supply manages itself for the entire session.
 
 ---
 

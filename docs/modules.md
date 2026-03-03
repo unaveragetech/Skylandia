@@ -1,58 +1,80 @@
 # Skylandia Module Catalog
 
-> A reference across all Skylandia module categories.
-> This is not a complete list — each category contains additional modules not documented here.
-> Feature deep-dives are linked where they exist.
+> Every module documented from source. Real settings. Real behaviors. Real integrations.
+> This is not a feature list — it's an architecture guide.
 
 ---
 
 ## 🧭 Exploration & Hunting
 
-*Modules for finding what every other player missed.*
-
 ### Trails
-The most advanced chunk classification system in any Minecraft client. Every loaded chunk is analyzed through up to 8 independent detection methods and assigned one of five forensic types: **NEW**, **OLD**, **BEING_UPDATED**, **OLD_GENERATION**, or **TICK_EXPLOIT**.
+Chunk forensics engine. Eight detection methods, five classification types. Every loaded chunk is independently analyzed using palette exploit (block section ordering), legacy update detection, dimension-specific old-chunk signatures (separate detectors for Overworld/Nether/End), real-time packet processing, liquid exploit, and block update timing analysis. Results are cross-referenced against XaeroPlus modules when available.
 
-- **Palette Exploit Detection** — analyzes block palette ordering to distinguish freshly generated chunks from old ones (1.18+)
-- **Legacy Chunk Update Detection** — marks chunks actively migrating from pre-1.17 generation as they load
-- **Overworld/Nether/End Old Chunk Detectors** — version-specific forensic checks for each dimension
-- **Real-Time Packet Detection** — processes chunk data packets as they arrive for immediate classification
-- **Liquid & Block Update Exploit modes** — secondary heuristics for edge cases
+Each of the five chunk types (`NEW`, `OLD`, `BEING_UPDATED`, `OLD_GENERATION`, `TICK_EXPLOIT`) has **independent** color rendering, notification toggle, Discord webhook URL, Discord ping ID, and persistence settings. You configure which chunk types alert you, which ones ping specific Discord members, and how long classifications persist between sessions.
 
-Each chunk type is independently colored, logged, cached across sessions, and can fire Discord webhook alerts. Integrates with Xaero’s Minimap via XaeroPlus.
-
-[→ Full deep-dive](features/trail-discovery.md)
-
----
-
-### BetterStashFinder
-Async chunk scanner that detects storage containers (chests, barrels, shulker boxes) and structures in every incoming chunk. Runs on a dedicated thread pool so detection never blocks the game.
-
-**What it finds:**
-- Storage blocks (flagged immediately with coordinate + Discord webhook)
-- Villages — detected via iron golem and villager entity presence
-- Trial Chambers — detected via trial spawner and Breeze entities
-- Dungeons — spawner type analysis
-- Custom structure rules via RuleManager
-
-Player detection logs nearby players on a 5-minute interval. Auto-screenshots discovery moments. Creates Xaero waypoints on hit. Has a full custom GUI screen for managing discovered stashes.
+[→ Full deep-dive with all 8 methods explained](features/trail-discovery.md)
 
 ---
 
 ### TrailFollower
-Reads Trails’ chunk classifications in real time and autonomously navigates toward player-activity signals. Weighs incoming chunk data against configurable rules to determine the best bearing, executes the travel via AFKVanillaFly for long legs, and runs a fallback protocol (spiral / hold / return / stop) when the trail runs cold.
+Reads Trails classifications in real time. Steers toward player-touched or historically loaded terrain automatically.
 
-[→ Full deep-dive](features/trail-discovery.md)
+**What makes it special:**
+- **POI Block List** — add any block type. When those blocks appear in a newly loaded chunk, TrailFollower weights its bearing toward that chunk. Hunting obsidian-walled bases? Add obsidian. It steers toward it.
+- **Destination Mode** — give it an ordered list of Xaero waypoint names. It visits them in sequence, loops if configured, fires a Discord webhook at each arrival (with fields: waypoint name, completion %, distance to next, total count, coordinates, timestamp).
+- **Two movement modes** — Simple (direct key presses, reliable) or Smart (Baritone pathfinding, handles obstacles)
+- **Two flight modes** — PITCH40 (locked 40° integration with Pitch40Util) or VANILLA (direct velocity, no constraints)
+- **Two firework modes** — VELOCITY (speed-threshold-triggered) or TIMED_DELAY (interval-based)
+- **Anti-AFK randomization** — small speed/direction variations to pass server movement monitoring
+- **Debug overlays** — colored direction line, trail path, directional arrow, chunk data summary — watch the navigation decision in real time
+
+[→ Full pipeline deep-dive](features/trail-discovery.md)
 
 ---
 
-### SmartActionBot
-Natural language command executor and autonomous agent. Accepts a queue of movement, mining, and interaction commands. Parses them with a built-in stub and optional LLM integration. Simultaneously manages food/health, fights nearby enemies, and avoids revisiting positions. Designed to accept input from OllamaBotModule for a fully AI-driven field agent.
+### AFKVanillaFly
+Session-length AFK elytra flight. Notable integrations beyond basic flight:
+- **Path Through Old Chunks** — queries Trails directly and routes through old/player-touched terrain
+- **Respect AreaLoader** — pauses when AreaLoader is active to prevent resource conflicts
+- **Auto-land** — descends and lands at the final waypoint instead of dropping
+- **Auto-resume** — restarts path after interruptions
+- **Obstacle avoidance** — detects blocks ahead, pauses or reroutes
+- **Resource monitor** — warns/disables when fireworks or elytra durability are low
+- **Anti-AFK movement randomization** for extended sessions
 
 ---
 
 ### CoordPoppy
-Advanced minimap and reconnaissance surface. Subsystems include: **Randar exploit integration** (correlates RNG seed output with entity positions to locate players remotely), **RemoteEntityDetector**, **PlayerActivityTracker**, **LocationSpoofer**, **ChunkAnalyzer**, **TrailsIntegration** (overlays Trails classifications on the map), **TrailFollowerIntegration**, **SwarmIntegration** (multi-instance data sharing), and Discord webhook support.
+14-subsystem reconnaissance layer. Seat of the Randar exploit integration — provide the server seed and the `RemoteEntityDetector` correlates RNG output with entity positions to locate players without line of sight. The `PlayerActivityTracker` builds a presence history over time.
+
+**Swarm Integration** — uses Meteor's built-in Swarm system to share map data (chunk classifications, entity positions, waypoints, Trails overlay) with every other connected Skylandia instance every 10 seconds. Running multiple accounts? All of them see each other's discoveries in real time.
+
+Full subsystem list: MapRenderer, BlockColorPalette, ChunkAnalyzer, LocationSpoofer, RemoteEntityDetector, PlayerActivityTracker, TrailsIntegration, TrailFollowerIntegration, XeroIntegration, SwarmIntegration, FilteringSystem, SwarmMapData.
+
+Setting groups: Map Appearance, Map Position, Stats UI Position, Proximity Detection, Mob Selection, Webhooks, Beacon Placement, Chunk Visualization, Entity Tracking, Advanced Mapping, Swarm Integration, Remote Scanning, Player Tracking, Filtering & Search.
+
+[→ CoordPoppy deep-dive within Trail Discovery](features/trail-discovery.md)
+
+---
+
+### BetterStashFinder
+Async stash scanner backed by a dedicated detection architecture. Runs on a thread pool so chunk scanning never blocks the game. Per-chunk: scans all block entities for storage containers, then runs the detection pipeline in batches of 5 chunks per tick.
+
+**Structure detectors included:**
+- `PistonDoorDetector` — hidden piston entrances
+- `BedrockStaircaseDetector` — classic anarchy base signatures
+- `TunnelDetector` + `TunnelEntranceDetector` — artificial tunnels and their entrances
+- `VillageAnomalyDetector` + `VillageHouseDetector` — modified or inhabited villages
+- `PortalFrameDetector` — Nether portal frames
+- `DungeonDetector` — mossy cobblestone + spawner
+- `TrialChamberDetector` — trial spawner + Breeze entities
+
+Player detection fires on a 5-minute interval with re-alert suppression. Auto-screenshots discoveries to Minecraft's screenshot folder. Creates Xaero waypoints on hit. Full custom GUI for managing the stash log.
+
+---
+
+### SmartActionBot
+Natural language task executor. Maintains a command queue, parses commands (`"walk to 100 64 200"`), and executes through Baritone + input simulation. Simultaneously handles inventory management, food/health monitoring, basic combat, and visited-position tracking to prevent loops. LLM integration stub accepts input from OllamaBotModule for a fully AI-driven field agent.
 
 ---
 
@@ -60,54 +82,56 @@ Advanced minimap and reconnaissance surface. Subsystems include: **Randar exploi
 
 | Module | What it does |
 |--------|--------------|
-| **BaseFinder** | Detects and scores base-like terrain/entity signatures from chunk data |
-| **CaveDisturbanceDetector** | Flags player-disturbed cave terrain: torches, unnatural block cuts, cleared sections |
-| **StashBotModule** | Automated stash log: receives BetterStashFinder hits, writes log, creates waypoints, fires alerts |
-| **TerrainAnalyzer** | Scores terrain for travel efficiency, PvP choke-points, and build strategy |
-| **SearchBot** | Grid, spiral, and custom-path automated area searches with waypoint logging |
-| **OldChunkNotifier** (render) | Alerts when you enter a historically loaded chunk |
-| **SkyportalFinder** | Locates portals and portal frames in explored terrain |
-| **RuleManager / SearchRule** | Defines custom detection rules for BetterStashFinder and SearchBot |
+| **BaseFinder** | Scores chunk terrain/entity signatures for base-like patterns |
+| **CaveDisturbanceDetector** | Flags player-disturbed cave terrain: torches, unnatural cuts, cleared sections |
+| **StashBotModule** | Pipeline endpoint: receives BetterStashFinder hits, writes log, creates waypoints, fires alerts |
+| **TerrainAnalyzer** | Scores terrain for travel efficiency, PvP choke-points, build suitability |
+| **SearchBot** | Grid, spiral, custom-path automated area search with waypoint logging |
+| **SkyportalFinder** | Locates portal frames in explored terrain |
+| **OldChunkNotifier** | Alert overlay on entering a historically loaded chunk |
 
 ---
 
 ## ⚙️ Automation
 
-*Modules that do things so you don’t have to.*
-
 ### DemonCrystal
-End Crystal PvP engine. 60-tick movement prediction, 5 multi-crystal modes (Dual/Triple/Quad/Adaptive/Burst), 15 setting categories, anti-ghost placement, existence verification, anti-suicide and totem safety systems, emergency shutdown.
+50 setting groups. A self-tuning combat AI that tracks performance metrics per session and per attack strategy and adjusts its own parameters in real time. Eight attack strategies with a `FallbackLogic` system that rotates when the current strategy loses effectiveness. Movement prediction up to 60 ticks. Box-scan placement that evaluates every possible position simultaneously and picks the mathematically optimal one on every tick. CEV state machine, city mining, surround breaking, rebreak protection, air placing, auto-gap, hole snap, burrow+.
 
 [→ Full deep-dive](features/demon-crystal.md)
 
 ---
 
 ### ChunkChestGrid
-Builds a storage network by placing chests across a configurable grid of chunks (up to 50×50). Three routing strategies (Serpentine, Nearest-First, Adjacent Semi-Random), four placement patterns (Random, Grid, Corners, Center Focus), variable or fixed chest counts, expand-on-complete, shulker box restocking, and optional auto-craft from wood. Full render overlay shows current grid progress.
+Full storage infrastructure builder with a 7-state execution machine: INITIALIZING → MOVING_TO_CHUNK → PLACING_CHESTS → REFILLING_INVENTORY → CRAFTING_CHESTS → COLLECTING_WOOD → COMPLETED. It runs out of chests, opens your shulkers, empties those, goes to find trees, chops them, crafts chests, and continues — fully autonomous. 50×50 chunk grid, expand-on-complete, row validation, Baritone navigation, three routing modes, four placement patterns.
 
-[→ See ShulkerTransport deep-dive for full context](features/shulker-transport.md)
-
----
-
-### AIRraid
-Aerial TNT bombing module. Only fires while elytra-flying above a configurable Y level and moving horizontally. Manages TNT and flint-and-steel hotbar slots automatically — switch, place, ignite, switch back — per placement. Zero manual slot management during a bombing run.
-
----
-
-### AutoPromo (Wither Builder)
-Automates summoning Withers. Scans a configurable radius for valid construction positions, builds the soul sand pattern, optionally names the spawned Wither with a name tag. Configurable delays, rotation assist, and single-shot mode. Useful for wither-based griefing or Nether Star farming workflows.
+[→ Full deep-dive with state machine diagram](features/shulker-transport.md)
 
 ---
 
 ### ShulkerTransportModule
-Two-account dimension logistics pipeline. Transporter + Commander role system, explicit confirmation handshake at each step, stasis chamber verification, item blacklist, encrypted SecureChat coordination, full rollback on failure.
+Two-account cross-dimension logistics via stasis chambers. Full modular pipeline: `CoordinationManager`, `StasisController`, `InventoryManager`, `CommandSequence`, `TransportCondition`, `TransportAction`, `TransportException` with rollback. Explicit confirmation handshake, item blacklist, encrypted SecureChat inter-account channel, per-step timeouts, typed error rollback.
 
 [→ Full deep-dive](features/shulker-transport.md)
 
 ---
 
 ### AFKVanillaFly
-Session-length AFK elytra flight. Locked altitude, velocity-aware firework timing, no input required. Used by TrailFollower for long travel segments.
+See Exploration section — this module bridges both categories.
+
+---
+
+### AIRraid
+Aerial TNT bombing. Only fires when elytra-flying above a configurable Y level and moving horizontally — won't accidentally bomb your own base when walking. Manages TNT hotbar slot and flint-and-steel hotbar slot independently: switches to TNT → places → switches to igniter → ignites → switches back. Per-bomb. Zero manual hotbar management in a bombing run.
+
+---
+
+### AutoPromo (Wither Builder)
+Fully automates Wither summoning. Scans a configurable horizontal/vertical radius for valid construction positions, places the soul sand T/+ pattern, optionally names the spawned Wither with a name tag from inventory. `block-delay` (0 = instant placement), `wither-delay` (gap between multi-wither builds), rotation assist, single-shot mode. Visual render overlay shows planned construction positions in configurable colors.
+
+---
+
+### SmartShulkerManager
+Tracks shulker fill levels, categorizes contents, identifies deployment-ready vs depleted boxes. Surfaces the right shulker at the right moment for ChunkChestGrid, ShulkerTransportModule, and ElytraSwap's Elytra Fixer.
 
 ---
 
@@ -118,14 +142,13 @@ Session-length AFK elytra flight. Locked altitude, velocity-aware firework timin
 | **Printer** | Automated schematic building |
 | **SkylandiaHammer** | Large-area systematic mining |
 | **Boomer** | TNT placement and detonation automation |
-| **AutoEnchant** | Full enchanting workflow including table navigation and anvil combining |
+| **AutoEnchant** | Enchanting workflow: table navigation, enchantment selection, anvil combining |
 | **EndDimensionProcessModule** | Automates End entry/exit sequence and dragon fight states |
-| **SmartShulkerManager** | Tracks shulker fill levels, sorts contents, flags ready-for-transfer boxes |
-| **AreaLoader** | Forces chunk loading in a defined region for build/automation prep |
-| **TridentDupe / Tridentus** | Trident duplication and trident-based travel/combat aura |
-| **Dualist** | Dual-wield combat flow automation |
+| **AreaLoader** | Forces chunk loading in a defined region for build/automation preparation |
+| **TridentDupe / Tridentus** | Trident duplication + trident-based travel and combat aura |
+| **Dualist** | Dual-wield combat automation |
 | **AutoDropDupe / ChristeveDupe / ItemFrameDupe / duprexion** | Various duplication workflows |
-| **MassRequester** | High-rate server request module |
+| **MassRequester** | High-rate server request utility |
 | **CrashSuite** | Targeted crash utilities |
 | **AutoSpeef** | Automated Spleef gameplay |
 
@@ -133,35 +156,59 @@ Session-length AFK elytra flight. Locked altitude, velocity-aware firework timin
 
 ## 🛠️ Utility
 
-*Quality-of-life and support modules that make everything else work better.*
-
 ### GrimEfly
-Chestplate-based elytra flight via the bounce exploit. Your elytra **never takes durability**. Bounce mode with configurable pitch lock (default 90°), yaw lock, and custom yaw support. Obstacle Passer subsystem handles terrain interruptions. Baritone integration for ground-rerouting under low ceilings.
+Chestplate-based elytra flight via the bounce exploit. Your elytra **never takes durability hits**. When you activate GrimEfly, it auto-equips a chestplate (fixing a reconnect bug where you join wearing the elytra).
+
+**Highway Obstacle Passer** — the unique feature. When `highwayObstaclePasser` is enabled, Baritone handles terrain interruptions automatically:
+- Configurable start position (`(0,0)` default, custom for ringroads)
+- `awayFromStartPos` — whether to path toward or away from origin
+- `avoidPortalTraps` — scans incoming chunks for portal trap structures and reroutes Baritone around them before you enter range
+- `portalScanWidth` — how wide an area to scan perpendicular to the highway axis
+- `portalAvoidDistance` — how far ahead to start the reroute
+- `baritoneOffset` — fine-tune where Baritone places its goals relative to your position
+- `targetY` — lock the bounce Y level for consistency in tunnel sections
+- `Jump Delay` — control speed in 1×2 tunnels by varying bounce timing
+- **Stuck detection** — if you stop moving, the module toggles itself off and on to reset state
+
+Portal trap detection happens on `ChunkDataEvent` — before you're close enough to enter one.
 
 ---
 
 ### ElytraSwap
-Intelligent elytra lifecycle manager. Warns at configurable durability threshold. Auto-replaces broken elytra from inventory without interrupting flight. **Elytra Fixer** sub-group auto-repairs all elytras below a durability floor using Bottles o’ Enchanting. Handles held-elytra swapping for GrimEfly workflows.
+Intelligent elytra lifecycle manager with four sub-systems:
+
+1. **Warning** — durability threshold alert
+2. **Auto-Replace** — swaps in a fresh elytra from inventory when durability drops below a second threshold, mid-flight, without you noticing
+3. **Elytra Fixer** — automatically repairs all elytras below a durability floor using Bottles o' Enchanting. When bottles run out, opens nearby shulker boxes (configurable scan range) or opens inventory shulkers to extract more. Your elytra supply is self-sustaining.
+4. **Mid-Air Fixing** — repairs elytras while flying:
+   - **Platform mode** — places a temporary block above or below you, lands on it, fixes, auto-breaks platform. `auto-break-platform` removes the evidence.
+   - **Bottle-throw mode** — throws bottles upward at a configurable angle. XP orbs arc overhead and fall on you. Configure throw angle, bottles before collecting, collect duration in ticks.
+   - `auto-trigger-mid-air-fix` — fires automatically when broken elytra count hits threshold
+   - SafeWalk toggle prevents falling off your own platform
+
+[→ Full ElytraSwap context in Journey Recorder deep-dive](features/journey-recorder.md)
 
 ---
 
 ### OllamaBotModule
-Local LLM chat assistant inside Minecraft. Routes chat messages (prefix-triggered or respond-to-all) to a local [Ollama](https://ollama.com/) instance. 10-message rolling conversation memory. Configurable system prompt, model selection (auto-detected from Ollama), whitelist, and two-thread async execution so the game never waits.
+Local LLM chat assistant via Ollama (`localhost:11434`). Trigger prefix (default `!ask`) or respond-to-all mode. 10-message rolling conversation context. Configurable system prompt, model (auto-detected from Ollama), whitelist of allowed users. Two-thread executor — never blocks the game waiting for a response. `refresh-models` queries Ollama live and populates available models. Can be used as the input source for SmartActionBot's command queue for a fully AI-driven autonomous agent.
 
 ---
 
 ### SecureChatModule
-Client-side encrypted messaging layer. Encrypts outgoing chat and decrypts incoming for paired Skylandia clients on the same key. Also hosts custom chat filter rules. Backend for ShulkerTransportModule’s inter-account coordination channel.
+Client-side encrypted messaging layer. Three named channels with independent passwords. Active channel switching without reconfiguration. Long message chunking at a configurable character limit. Message prefix to distinguish encrypted messages from regular chat. Discord webhook for password and message history logging. Used by ShulkerTransportModule as the inter-account coordination channel.
 
 ---
 
 ### GrimDuraFirework
-Conserves elytra durability under Grim anti-cheat by timing firework use to miss the server-side durability tick window. Required for long-distance flight on Grim-protected servers.
+Conserves elytra durability under Grim anti-cheat by timing firework use to miss the server-side durability tick window. Required on Grim-protected servers for untouched elytra during long sessions.
 
 ---
 
-### AutoPromo
-Wither builder. See Automation category.
+### JourneyRecorderModule
+20-category session recorder. Configurable in every dimension. AI narrative generation via HuggingFace with user profile personalization, story theme/genre selection, incremental refinement mode, auto-integration of segments, Discord webhooks for both story and raw data. Smart deduplication with similarity window and aggregate counting. In-game book GUI with configurable cover style and position.
+
+[→ Full deep-dive](features/journey-recorder.md)
 
 ---
 
@@ -169,17 +216,16 @@ Wither builder. See Automation category.
 
 | Module | What it does |
 |--------|--------------|
-| **Pitch40Util** | Locks pitch to 40° for optimal elytra height gain and velocity |
-| **InfiniteTools** | Swaps tools before they break; keeps you working without interruption |
-| **SignHistorian** | Archives and restores sign text; useful for documenting discoveries |
-| **TrackerModule** | Logs and visualizes tracked player positions and movement over time |
-| **BaritonePathing** | Baritone navigation as a Skylandia module with integrated settings |
-| **JourneyRecorderModule** | AI-powered session narrative generation |
-| **JourneyBookGUI** | In-game browser for saved journey stories |
-| **AIStoryGenerator** | HuggingFace backend for story generation |
+| **Pitch40Util** | Locks pitch to 40° for optimal elytra height gain |
+| **InfiniteTools** | Swaps tools before breaking — keeps the workflow uninterrupted |
+| **SignHistorian** | Archives and restores sign text — documents the world's history |
+| **TrackerModule** | Logs and visualizes tracked player positions over time |
+| **BaritonePathing** | Baritone navigation exposed as a Skylandia-integrated module |
+| **JourneyBookGUI** | In-game paginated story browser |
+| **AIStoryGenerator** | HuggingFace API backend for journey narrative generation |
 | **AutoLoginModule** | Automates server login commands on connect |
 | **Numerology** | Coordinate analysis and seed-based math (Randar-compatible) |
-| **BungeeSpoofer** | BungeeCord IP spoofing utility |
+| **BungeeSpoofer** | BungeeCord IP spoofing |
 | **EnchantedAnvil** | Anvil interaction automation |
 | **Firework** | Firework timing utility |
 | **ServerScannerModule** | Network-level server scanning |
@@ -188,35 +234,33 @@ Wither builder. See Automation category.
 
 ## 👁️ Render
 
-*See more. Know more. Act faster.*
-
 ### CoordPoppy
-Advanced minimap with Randar exploit, remote entity detection, player activity tracking, Trails/TrailFollower overlay, LocationSpoofer, ChunkAnalyzer, SwarmIntegration, and Discord webhook support. See Exploration section for full detail.
+See Exploration section. Render category because it overlays on the minimap, but it does far more than render.
 
 ---
 
 ### HoleAndTunnelAndStairsESP
-Terrain geometry analysis over a configurable chunk range (up to 1024 chunks). Detects holes (safe PvP spots), tunnels (navigable passages), and staircases (terrain transitions) simultaneously or in isolated modes. Y-range filtering, air-block-only mode, configurable processing rate (chunks per tick). Essential for PvP terrain reading at range.
+Terrain geometry analysis for PvP. Configurable render distance up to 1024 chunks. Four detection modes: holes, tunnels, stairs, or all simultaneously. Y-range filtering (min/max offset from world limits). Air-block-only mode for stricter hole detection. Configurable chunks-per-tick processing rate to balance performance. Independent color settings for holes, tunnels, and staircases.
 
 ---
 
 ### VanityESP
-Highlights decorative world objects in a world scanner:
-- **Item frames** — with special mapart outline color for frames containing maps
-- **Banners** — all types, wall and floor
-- **Signs** — for discovering player-left messages
+Maps the world's decorative layer:
+- **Item frames** — highlighted in configurable color; frames containing maps get a separate mapart outline color
+- **Banners** — wall and floor, all types
+- **Signs** — highlights player-left messages
 
-Used by collectors and historians to find maparts, territory markers, and sign archives without walking the whole grid.
+Used by collectors and historians to find maparts, territory markers, and sign archives without grid-walking.
 
 ---
 
-### DroppedItemESP
-Keeps high-value dropped items visible at long range. Configurable item filter and distance. Prevents items from disappearing from view in chaotic situations.
+### DamageNumbersModule
+Floating damage numbers on every hit — yours and incoming. Real-time combat feedback without leaving the game.
 
 ---
 
 ### EntityClusterESP
-Identifies and marks the **center of mass** of dense entity or player clusters at range. Useful for locating mob farms, player gatherings, or stash areas with a lot of container entities.
+Computes and marks the center of mass of dense entity or player clusters at range. Cluster size thresholds configurable. Useful for locating mob farms, player gatherings, or high-entity stash areas.
 
 ---
 
@@ -224,44 +268,36 @@ Identifies and marks the **center of mass** of dense entity or player clusters a
 
 | Module | What it does |
 |--------|--------------|
-| **PotESP** | Flags decorated pots and the items found inside |
-| **MobGearESP** | Highlights mobs that picked up player-dropped loot |
-| **CrystalPositionESP** | Visualizes optimal End Crystal placement positions in real time |
-| **DamageNumbersModule** | Floating damage numbers displayed on hit — yours and incoming |
-| **NerdVision** | Enhanced visibility in low-light and dark environments |
-| **RoleTags** | Displays Lotus Clan role tags above recognized player heads |
-| **OldChunkNotifier** | Alert overlay when you enter a historically loaded chunk |
-| **ScreenBlackout** | Blackout overlay for privacy during screen sharing |
-| **NoRender** | Selectively disables rendering categories for performance or clarity |
-| **DemonCrystalHUD** | HUD overlay showing DemonCrystal state, target, and active mode |
+| **PotESP** | Flags decorated pots and contents |
+| **MobGearESP** | Highlights mobs wearing player-dropped loot |
+| **DroppedItemESP** | Keeps high-value drops visible at long range |
+| **CrystalPositionESP** | Optimal crystal placement positions in real time |
+| **RoleTags** | Clan role tags above recognized player heads |
+| **NerdVision** | Enhanced low-light visibility |
+| **DemonCrystalHUD** | DemonCrystal state, current strategy, target, active mode |
+| **OldChunkNotifier** | Alert when entering a historically loaded chunk |
+| **ScreenBlackout** | Blackout overlay for screen sharing |
+| **NoRender** | Selective render category disabling |
 
 ---
 
 ## 🍩 Loukoumades (Contributed)
 
-*Community-contributed modules maintained under the Loukoumades namespace.*
-
 ### TunnelBaseFinder
-Anarchy-optimized base hunting via automated RTP and tunnel mining. Teleports to a configurable RTP region (EU_CENTRAL, NA, etc.), mines vertically down to a configurable Y level (default -60), then tunnels horizontally scanning for base signatures. Discord webhook alerts on hit. Configurable wait time between commands to match server rate limits.
-
----
+Anarchy base hunting via RTP + mining. Teleports to a configurable RTP region (EU_CENTRAL, NA, etc.), mines vertically to a configurable Y level (default -60, configurable to -64→80), then tunnels horizontally scanning for base signatures. Discord webhook on hit. Configurable wait between commands to match server rate limits. `vertical-mine` toggle for disabling the dig-down phase on flat terrain.
 
 ### AutoSell
-Automates item selling on servers with shop GUIs. Whitelist or blacklist mode — sells listed items or everything except listed items. Configurable item list and action delay. Re-opens the shop GUI automatically between sell cycles.
-
----
+Automates item selling in GUI-based shop systems. Whitelist mode (sell only listed items) or blacklist mode (sell everything except listed items). Configurable sell delay (0–20 ticks). Re-opens shop GUI between cycles automatically.
 
 ### RainNoti
-Sends a notification when it starts raining in-game. Useful for farms and automation flows that depend on weather state.
-
-> Loukoumades modules are community contributions. Quality and maintenance may vary; they are included as-is for members who find them useful.
+Weather-state notification for farm automation timing.
 
 ---
 
 ## 🐍 Minescript Integration
 
 ### MinescriptIntegration
-In-game Python script editor and launcher via [Minescript](https://minescript.net/). Write, edit, save, and execute `.py` scripts from the Minecraft GUI without opening an external editor. Scripts have access to the Minescript API for player movement, inventory, chat, block queries, and more. The integration includes a full service layer (`MinescriptService`, `RealMinescriptService`, `StubMinescriptService`) so Skylandia’s other modules can programmatically trigger script execution.
+In-game Python script editor and launcher. Write, edit, save, and execute `.py` scripts from the Minecraft GUI. Full Minescript API access: player movement, inventory manipulation, chat, block queries. Service architecture: `MinescriptService` interface, `RealMinescriptService` (live), `StubMinescriptService` (testing). Other Skylandia modules can call `MinescriptServiceFactory.get()` to trigger script execution programmatically — making every module in Skylandia scriptable.
 
 ---
 

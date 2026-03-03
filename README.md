@@ -12,75 +12,63 @@
 
 ---
 
-> Skylandia is a fully-modular Meteor Client addon born from the spirit of legendary anarchy repositories.
-> It’s designed for **exploration, automation, combat, and pushing the limits** of client-side gameplay.
-> Whether you’re a stash-hunting veteran, a long-haul traveler, or a tactician who demands the best tools —
-> Skylandia is your Swiss Army knife.
+> Skylandia is a fully-modular Meteor Client addon built for the players who treat anarchy as a craft.
+> The modules here solve problems others never attempted.
 
 ---
 
-## Why Skylandia?
+## Things Skylandia Does That You Haven't Seen Before
 
-There are a lot of Meteor addons. Most bolt a handful of modules together and call it done.
+**ElytraSwap repairs your elytras in mid-air without landing.** It throws Bottles o' Enchanting upward at a configured angle, lets the XP orbs arc back down onto you, and repairs damaged elytras while you fly. When the bottles run out, it opens shulker boxes in your inventory to get more. Your elytra supply manages itself for the entire session.
 
-Skylandia is different. The modules here solve problems at a level most clients don’t attempt:
+**GrimEfly's Highway Obstacle Passer detects portal traps before you enter them.** On every chunk load, it scans incoming terrain for portal frame structures. If one is within threshold distance of your highway path, Baritone reroutes around it before you're ever in range — automatically.
 
-- An exploration system that **autonomously hunts player trails across thousands of blocks** while you’re AFK
-- A combat engine that **predicts target movement up to 60 ticks ahead** and places crystals where they’ll land
-- An AI system that **turns your sessions into readable narrative stories** using live gameplay context
-- A logistics pipeline that **coordinates two accounts across dimensions** with explicit safety handshakes
-- A **Randar-exploit-powered minimap** that correlates RNG seeds with entity positions to locate players remotely
-- An **in-game AI chat assistant** backed by your local LLM — ask it anything, get context-aware answers
-- A chunk classification engine that tracks **5 distinct forensic chunk types** across 8 independent detection methods
-- TNT **bombing runs from elytra altitude** with zero manual slot management
-- An automated wither-summoning module that builds, places, and **names Withers** without touching a key
+**ChunkChestGrid builds a 50×50 chunk storage grid and handles its own supply chain.** Runs out of chests → opens your shulker boxes to refill. Those are empty too → goes to find trees → chops them → crafts more chests → continues the grid. Seven states, all automatic. No input required.
 
-This is not a module pack. It’s a toolkit built by people who play anarchy seriously.
+**DemonCrystal has a self-tuning AI that adjusts its own combat parameters during a fight.** It tracks damage-per-second, success rate, and strategy effectiveness in real time and modifies placement range, rotation speed, burst cooldown, and crystal count automatically based on what the server can handle and what's actually landing. It also runs eight distinct attack strategies (crystal placement, CEV breakin, city mining, surround breaking) and switches between them via a fallback system when the current one loses effectiveness.
+
+**Journey Recorder's AI knows who you are.** You provide a user profile prompt (`"I'm a solo stash hunter, I value secrecy over efficiency"`) and a story theme (`"noir"`). The model writes your sessions from your character's perspective, in your genre. With incremental refinement enabled, it rewrites the story as you play so the final output is a cohesive narrative, not a log.
+
+**CoordPoppy coordinates multiple Skylandia instances via Meteor's Swarm system.** Running two accounts? All of them share chunk classifications, entity positions, and Trails data with each other every 10 seconds. One account finds something — every client knows.
+
+**TrailFollower has a POI block list.** Add any block type. When those blocks appear in a newly loaded chunk, TrailFollower steers toward it. Add obsidian. Add crying obsidian. Add ancient debris. It hunts whatever you tell it to hunt.
+
+**BetterStashFinder's detection engine includes a PistonDoorDetector.** It scans for piston door patterns in loaded chunks — the classic hidden base entrance. It also runs BedrockStaircaseDetector, TunnelEntranceDetector, VillageAnomalyDetector, and six more.
+
+**Trails fires a Discord @mention for specific chunk types.** Configure a Discord ping ID per chunk type. Only `TICK_EXPLOIT` chunks (the freshest player signatures) ping you? Done.
 
 ---
 
 ## Feature Deep-Dives
 
-Some systems deserve more than a one-liner. These documents explain how the flagship modules actually work:
+Four systems documented fully from source code — real settings, real integrations, real state machines:
 
-| System | Category | What it covers |
-|--------|----------|-----------------|
-| [Trail Discovery System](docs/features/trail-discovery.md) | Exploration | Trails + TrailFollower + AFKVanillaFly + CoordPoppy |
-| [DemonCrystal](docs/features/demon-crystal.md) | Automation | Crystal PvP engine: prediction, modes, safety, companion modules |
-| [Journey Recorder](docs/features/journey-recorder.md) | Utility | AI story generation + GrimEfly + ElytraSwap + OllamaBotModule |
-| [Shulker Transport](docs/features/shulker-transport.md) | Automation | Two-account logistics + ChunkChestGrid + SmartShulkerManager |
+| System | What It Covers |
+|--------|----------------|
+| [Trail Discovery System](docs/features/trail-discovery.md) | Trails (8 methods, 5 types), TrailFollower, AFKVanillaFly, CoordPoppy (14 subsystems), Detection architecture |
+| [DemonCrystal](docs/features/demon-crystal.md) | 50 setting groups, self-tuning AI, CEV state machine, 8 attack strategies, PlaceData architecture |
+| [Journey Recorder](docs/features/journey-recorder.md) | 20 recording categories, AI persona + genre, incremental refinement, ElytraSwap mid-air repair |
+| [Shulker Transport](docs/features/shulker-transport.md) | ChunkChestGrid 7-state machine, ShulkerTransport pipeline, SecureChat encryption |
 
 ---
 
 ## Module Catalog
 
-Skylandia has **6 module categories** with dozens of modules total. The [full catalog](docs/modules.md) documents each category with detailed descriptions of key modules and a listing of everything else.
+Skylandia has **six module categories**. The [full catalog](docs/modules.md) documents every module from source.
 
-### Quick Category Overview
+**🧭 Exploration & Hunting** — Trails, TrailFollower, AFKVanillaFly, CoordPoppy, BetterStashFinder (with 9 structure detectors), SmartActionBot (LLM+Baritone autonomous agent), BaseFinder, CaveDisturbanceDetector, StashBotModule, TerrainAnalyzer, SearchBot, SkyportalFinder.
 
-**🧭 Exploration & Hunting** — chunk forensics (5 types, 8 detectors), async stash scanning, Discord webhook alerts, Xaero waypoint integration, natural language navigation via Baritone + LLM, Randar exploit minimap.
+**⚙️ Automation** — DemonCrystal (50 groups, self-tuning), ChunkChestGrid (7-state supply chain), ShulkerTransportModule (10-file pipeline), AIRraid (aerial TNT), AutoPromo (Wither builder), Printer, SkylandiaHammer, Boomer, AutoEnchant, TridentDupe, Tridentus, Dualist, EndDimensionProcessModule, AreaLoader, SmartShulkerManager.
 
-> *Trails, BetterStashFinder, TrailFollower, SmartActionBot, CoordPoppy, BaseFinder, CaveDisturbanceDetector, StashBotModule, TerrainAnalyzer, SearchBot, SkyportalFinder, and more.*
+**🛠️ Utility** — GrimEfly (portal trap detection, obstacle passer, zero elytra durability), ElytraSwap (mid-air repair, shulker bottle extraction, auto-replace), OllamaBotModule (local LLM, 10-msg context, SmartActionBot integration), SecureChatModule (3-channel encrypted coordination), GrimDuraFirework, JourneyRecorderModule, Pitch40Util, InfiniteTools, SignHistorian, TrackerModule, BaritonePathing, Numerology, AutoLoginModule.
 
-**⚙️ Automation** — crystal PvP, aerial TNT bombing, wither spawning, multi-account dimension logistics, schema building, large-area mining, chunk-grid storage infrastructure, trident workflows.
+**👁️ Render** — CoordPoppy, HoleAndTunnelAndStairsESP (1024-chunk range), VanityESP (maparts/banners/signs), DamageNumbersModule, EntityClusterESP, PotESP, MobGearESP, DroppedItemESP, CrystalPositionESP, RoleTags, NerdVision, DemonCrystalHUD.
 
-> *DemonCrystal, AIRraid, AutoPromo, ChunkChestGrid, ShulkerTransportModule, AFKVanillaFly, Printer, SkylandiaHammer, Boomer, AutoEnchant, TridentDupe, Tridentus, EndDimensionProcessModule, Dualist, and more.*
+**🍩 Loukoumades (Community)** — TunnelBaseFinder (RTP→dig→tunnel hunt), AutoSell, RainNoti.
 
-**🛠️ Utility** — no-durability elytra flight (GrimEfly), intelligent elytra swap + auto-repair, local LLM chat assistant, encrypted inter-client messaging, Grim firework conservation, Baritone navigation, tool preservation.
+**🐍 Minescript** — MinescriptIntegration with programmatic triggering from any other module.
 
-> *GrimEfly, ElytraSwap, OllamaBotModule, SecureChatModule, GrimDuraFirework, Pitch40Util, InfiniteTools, SignHistorian, TrackerModule, BaritonePathing, JourneyRecorderModule, Numerology, AutoLoginModule, and more.*
-
-**👁️ Render** — advanced Randar minimap with remote entity detection, hole/tunnel/staircase ESP (1024-chunk range), mapart and banner highlighting, damage numbers, mob gear detection, clan role tags.
-
-> *CoordPoppy, HoleAndTunnelAndStairsESP, VanityESP, DroppedItemESP, EntityClusterESP, PotESP, MobGearESP, CrystalPositionESP, DamageNumbersModule, RoleTags, NerdVision, DemonCrystalHUD, and more.*
-
-**🍩 Loukoumades (Community)** — contributed modules. RTP-and-tunnel base hunting, automated item selling, weather notifications.
-
-> *TunnelBaseFinder, AutoSell, RainNoti.*
-
-**🐍 Minescript** — in-game Python script editor and launcher with full Minescript API access and programmatic script triggering from other modules.
-
-[→ Browse the full catalog with detailed descriptions](docs/modules.md)
+[→ Browse the full catalog](docs/modules.md)
 
 ---
 
@@ -89,18 +77,18 @@ Skylandia has **6 module categories** with dozens of modules total. The [full ca
 | Dependency | Required | Unlocks |
 |------------|----------|---------|
 | **Meteor Client** | ✅ | Core framework |
-| **Fabric Loader + MC 1.21.4** | ✅ | Mod loader + target version |
-| **Xaero’s Minimap + World Map + XaeroPlus** | Optional | Trails, BetterStashFinder, CoordPoppy, TrailFollower, OldChunkNotifier |
-| **Baritone** | Optional | BaritonePathing, GrimEfly, AFKVanillaFly, TrailFollower, SmartActionBot |
+| **Fabric Loader + MC 1.21.4** | ✅ | Mod loader |
+| **Xaero's Minimap + World Map + XaeroPlus** | Optional | Trails, BetterStashFinder, CoordPoppy, TrailFollower waypoints |
+| **Baritone** | Optional | GrimEfly obstacle passer, ChunkChestGrid, TrailFollower Smart mode, SmartActionBot |
 | **Minescript** | Optional | MinescriptIntegration |
 | **Ollama (local)** | Optional | OllamaBotModule |
-| **HuggingFace API token** | Optional | JourneyRecorderModule / AIStoryGenerator |
+| **HuggingFace API token** | Optional | JourneyRecorderModule |
 
 ---
 
 ## 🔑 Access
 
-Skylandia is **private**. Builds are individually authorized. The mod verifies your identity on every launch — if you’re not on the list, nothing loads. How this works is not documented here.
+Skylandia is **private**. Builds are individually authorized. The mod verifies your identity on every launch — if you're not on the list, nothing loads. How this works is not documented here.
 
 ---
 
@@ -110,27 +98,20 @@ Access is earned through Lotus Clan membership or meaningful contribution — no
 
 1. **Join the Discord:** [discord.gg/MjMnsGhe8T](https://discord.gg/MjMnsGhe8T)
 2. **Participate:** Contribute to the clan, the codebase, or the community.
-3. **Get reviewed:** Leadership reviews and extends access to approved members.
+3. **Get reviewed:** Leadership extends access to approved members.
 4. **Receive your build:** An authorized JAR with your account registered.
 
 ---
 
 ## ❓ FAQ
 
-**Is the source code public?**  
-No. Only obfuscated authorized builds are distributed.
+**Is the source code public?** No. Obfuscated authorized builds only.
 
-**Which Minecraft version?**  
-1.21.4 on Fabric.
+**Which Minecraft version?** 1.21.4 on Fabric.
 
-**Which servers?**  
-Optimized for anarchy and long-running SMP. Most modules work anywhere; some automation may be limited by server-side anti-cheat.
+**Do I need all dependencies?** No — they unlock additional modules (Baritone, Xaero, Ollama, HuggingFace) but the core suite runs without them.
 
-**Do I need all the optional dependencies?**  
-No — they unlock additional modules but the core suite runs without them.
-
-**My modules aren’t loading.**  
-Your username isn’t authorized. Contact a Lotus Clan admin in Discord.
+**My modules aren't loading.** Your username isn't authorized. Contact a Lotus Clan admin in Discord.
 
 ---
 
@@ -144,7 +125,7 @@ Your username isn’t authorized. Contact a Lotus Clan admin in Discord.
 
 ---
 
-> *Built to explore, automate, experiment, and push Minecraft’s limits.*  
+> *Built to explore, automate, experiment, and push Minecraft's limits.*
 > *Use responsibly. Enjoy the chaos.*
 
 <p align="center">
