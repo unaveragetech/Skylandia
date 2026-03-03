@@ -1,135 +1,400 @@
-<h1 align="center">🌌 Skylandia</h1>
-<p align="center">
-  <strong>A private Meteor Client addon for Minecraft anarchy and SMP.</strong><br/>
-  Built for Lotus Clan. Crafted by <strong>Beelzebub4883</strong>.
-</p>
-<p align="center">
-  <a href="https://unaveragetech.github.io/Skylandia/">Website</a> •
-  <a href="https://discord.gg/bVcSMMMsbm">Discord</a> •
-  <a href="#-getting-access">Get Access</a> •
-  <a href="docs/modules.md">Module Catalog</a>
-</p>
+# 🌌 Skylandia — Meteor Client Addon
+
+**Skylandia** is a fully‑modular Meteor Client addon crafted by **Beelzebub4883** — a project born from the spirit of legendary repositories and trailblazing work within the Minecraft anarchy scene.  
+It's designed for **fun, experimentation, and bending the limits** of client‑side gameplay, with a focus on **Anarchy** and **SMP** servers where creativity, automation, and exploration thrive.
+
+Whether you're a stash‑hunting veteran, a long‑haul traveler, or someone who enjoys tinkering with powerful tools, Skylandia aims to be your Swiss Army knife.
 
 ---
 
-> Skylandia is a fully-modular Meteor Client addon built for the players who treat anarchy as a craft.
-> The modules here solve problems others never attempted.
+## 🎯 Project Vision
+
+Skylandia isn't just another "pack of modules" — it's an evolving playground with six core ambitions:
+
+- **Exploration Powerhouse** — Tools for stash hunting, base detection, and large‑scale scanning.  
+- **Automation Mastery** — Eliminate repetitive chores with smart, configurable bots and scripts.  
+- **Enhanced Awareness** — Custom render and ESP modules for clear, actionable intel.  
+- **Add‑on Harmony** — Designed to play nicely with other major Meteor Client extensions.  
+- **Innovation Hub** — A staging ground for experimental, cutting‑edge features.  
+- **Collaborative Spirit** — Built for contributors, tinkerers, and the "what if" crowd.
+
+💡 *Expect surprises — some modules are bleeding‑edge and will evolve rapidly.*
 
 ---
 
-## Things Skylandia Does That You Haven't Seen Before
+## 🛠 Feature Overview
 
-**ElytraSwap repairs your elytras in mid-air without landing.** It throws Bottles o' Enchanting upward at a configured angle, lets the XP orbs arc back down onto you, and repairs damaged elytras while you fly. When the bottles run out, it opens shulker boxes in your inventory to get more. Your elytra supply manages itself for the entire session.
+Skylandia packs an extensive set of tools for explorers, PvP tacticians, builders, and automation enthusiasts.  
+Modules are built to be **flexible**, **powerful**, and **user‑friendly**, with categories that help you find what you need fast.
 
-**GrimEfly's Highway Obstacle Passer detects portal traps before you enter them.** On every chunk load, it scans incoming terrain for portal frame structures. If one is within threshold distance of your highway path, Baritone reroutes around it before you're ever in range — automatically.
 
-**ChunkChestGrid is an obfuscation module — the first of its kind.** Its purpose is to negatively impact enemy stash scanners and tracers by autonomously blanketing a region in a semi-random or configured number of chests across up to 50×50 chunks. Every tool your enemy uses to find stashes — chest tracers, container scanners, BetterStashFinder-type modules — becomes worthless when there are tens of thousands of identically-structured false positives spread across 2,500 chunks. It handles its own wood supply, crafting, and routing without any input from you.
+### 🧭 Exploration & Hunting
 
-**DemonCrystal has a self-tuning AI that adjusts its own combat parameters during a fight.** It tracks damage-per-second, success rate, and strategy effectiveness in real time and modifies placement range, rotation speed, burst cooldown, and crystal count automatically based on what the server can handle and what's actually landing. It also runs eight distinct attack strategies (crystal placement, CEV breaking, city mining, surround breaking) and switches between them via a fallback system when the current one loses effectiveness.
 
-**Journey Recorder's AI knows who you are.** You provide a user profile prompt (`"I'm a solo stash hunter, I value secrecy over efficiency"`) and a story theme (`"noir"`). The model writes your sessions from your character's perspective, in your genre. With incremental refinement enabled, it rewrites the story as you play so the final output is a cohesive narrative, not a log.
+### 🛡 Utility
 
-**CoordPoppy coordinates multiple Skylandia instances via Meteor's Swarm system.** Running two accounts? All of them share chunk classifications, entity positions, and Trails data with each other every 10 seconds. One account finds something — every client knows.
 
-**TrailFollower has a POI block list.** Add any block type. When those blocks appear in a newly loaded chunk, TrailFollower steers toward it. Add obsidian. Add crying obsidian. Add ancient debris. It hunts whatever you tell it to hunt.
+### 👁 Render
 
-**BetterStashFinder's detection engine includes a PistonDoorDetector.** It scans for piston door patterns in loaded chunks — the classic hidden base entrance. It also runs BedrockStaircaseDetector, TunnelEntranceDetector, VillageAnomalyDetector, and six more.
 
-**Trails fires a Discord @mention for specific chunk types.** Configure a Discord ping ID per chunk type. Only `TICK_EXPLOIT` chunks (the freshest player signatures) ping you? Done.
+### 🤖 Automation
 
----
 
-## Feature Deep-Dives
-
-Four systems documented fully from source code — real settings, real integrations, real state machines:
-
-| System | What It Covers |
-|--------|----------------|
-| [Trail Discovery System](docs/features/trail-discovery.md) | Trails (8 methods, 5 types), TrailFollower, AFKVanillaFly, CoordPoppy (14 subsystems), Detection architecture |
-| [DemonCrystal](docs/features/demon-crystal.md) | 50 setting groups, self-tuning AI, CEV state machine, 8 attack strategies, PlaceData architecture |
-| [Journey Recorder](docs/features/journey-recorder.md) | 20 recording categories, AI persona + genre, incremental refinement, ElytraSwap mid-air repair |
-| [Shulker Transport & Obfuscation](docs/features/shulker-transport.md) | ChunkChestGrid obfuscation engine, ShulkerTransport pipeline, SecureChat encryption |
+**How modules are used:**  
+Each module in Skylandia is toggled via the Meteor Client GUI. You can configure settings, bind keys, and interact with modules in-game. Below, each module is described, followed by a short dialog or example of how a player might use it.
 
 ---
 
-## Module Catalog
+### 🧭 Exploration & Hunting
 
-Skylandia has **six module categories**. The [full catalog](docs/modules.md) documents every module from source.
+- **ActivatedSpawnerDetector**  
+	*Description:* Pinpoints active mob spawners for lucrative hunts.  
+	*Usage:*  
+	*Player:* "I want to find mob spawners for XP farms."  
+	*Skylandia:* "Enable ActivatedSpawnerDetector and fly around caves. Spawners will be highlighted when active."
 
-**🧭 Exploration & Hunting** — Trails, TrailFollower, AFKVanillaFly, CoordPoppy, BetterStashFinder (with 9 structure detectors), SmartActionBot (LLM+Baritone autonomous agent), BaseFinder, CaveDisturbanceDetector, StashBotModule, TerrainAnalyzer, SearchBot, SkyportalFinder.
+- **CaveDisturbanceDetector**  
+	*Description:* Detects signs of recent player activity to locate hidden stashes or bases.  
+	*Usage:*  
+	*Player:* "Are there any bases nearby?"  
+	*Skylandia:* "Turn on CaveDisturbanceDetector to scan for player-placed blocks and disturbances."
 
-**⚙️ Automation** — DemonCrystal (50 groups, self-tuning), ChunkChestGrid (obfuscation engine — first of its kind, 7-state autonomous supply chain, blankets 2,500 chunks with false-positive stash signatures), ShulkerTransportModule (10-file pipeline), AIRraid (aerial TNT), AutoPromo (Wither builder), Printer, SkylandiaHammer, Boomer, AutoEnchant, TridentDupe, Tridentus, Dualist, EndDimensionProcessModule, AreaLoader, SmartShulkerManager.
+- **Trails**  
+	*Description:* Records and replays your movement paths for analysis or nostalgia.  
+	*Usage:*  
+	*Player:* "I want to retrace my steps from last week."  
+	*Skylandia:* "Enable Trails to record your path, then replay it later."
 
-**🛠️ Utility** — GrimEfly (portal trap detection, obstacle passer, zero elytra durability), ElytraSwap (mid-air repair, shulker bottle extraction, auto-replace), OllamaBotModule (local LLM, 10-msg context, SmartActionBot integration), SecureChatModule (3-channel encrypted coordination), GrimDuraFirework, JourneyRecorderModule, Pitch40Util, InfiniteTools, SignHistorian, TrackerModule, BaritonePathing, Numerology, AutoLoginModule.
+- **BaseFinder**  
+	*Description:* Identifies base-like structures using block/entity patterns.  
+	*Usage:*  
+	*Player:* "Is this chunk a possible base?"  
+	*Skylandia:* "BaseFinder will scan for signs like signs, portals, and bubble columns."
 
-**👁️ Render** — CoordPoppy, HoleAndTunnelAndStairsESP (1024-chunk range), VanityESP (maparts/banners/signs), DamageNumbersModule, EntityClusterESP, PotESP, MobGearESP, DroppedItemESP, CrystalPositionESP, RoleTags, NerdVision, DemonCrystalHUD.
+- **StashBotModule**  
+	*Description:* Auto-logs and manages stashes with waypoints and alerts.  
+	*Usage:*  
+	*Player:* "I found a stash, can I mark it?"  
+	*Skylandia:* "StashBotModule will log the stash and set a waypoint automatically."
 
-**🍩 Loukoumades (Community)** — TunnelBaseFinder (RTP→dig→tunnel hunt), AutoSell, RainNoti.
+- **BetterStashFinder**  
+	*Description:* Adds refined filters and Xaero's Minimap/World Map integration.  
+	*Usage:*  
+	*Player:* "I want to filter stashes by loot type."  
+	*Skylandia:* "BetterStashFinder lets you set custom filters and integrates with Xaero's maps."
 
-**🐍 Minescript** — MinescriptIntegration with programmatic triggering from any other module.
+- **OldChunkNotifier**  
+	*Description:* Alerts when entering historically loaded chunks.  
+	*Usage:*  
+	*Player:* "Am I in an old chunk?"  
+	*Skylandia:* "OldChunkNotifier will notify you when you enter a chunk with history."
 
-[→ Browse the full catalog](docs/modules.md)
+- **TrailFollower**  
+	*Description:* Automatically retraces discovered trails via pitch-flight or Baritone.  
+	*Usage:*  
+	*Player:* "Can I follow someone's trail?"  
+	*Skylandia:* "TrailFollower will automate your movement along recorded trails."
+
+- **SearchBot**  
+	*Description:* Executes grid, spiral, random, or custom pattern searches with waypoint automation.  
+	*Usage:*  
+	*Player:* "I want to search a large area for stashes."  
+	*Skylandia:* "SearchBot will move you in a search pattern and mark found locations."
+
+- **TerrainAnalyzer**  
+	*Description:* Profiles terrain for strategic builds, travel, or PvP choke-points.  
+	*Usage:*  
+	*Player:* "Is this terrain good for a base?"  
+	*Skylandia:* "TerrainAnalyzer will analyze and report strategic features."
 
 ---
 
-## Dependencies
+### 🛡 Utility
 
-| Dependency | Required | Unlocks |
-|------------|----------|---------|
-| **Meteor Client** | ✅ | Core framework |
-| **Fabric Loader + MC 1.21.4** | ✅ | Mod loader |
-| **Xaero's Minimap + World Map + XaeroPlus** | Optional | Trails, BetterStashFinder, CoordPoppy, TrailFollower waypoints |
-| **Baritone** | Optional | GrimEfly obstacle passer, ChunkChestGrid, TrailFollower Smart mode, SmartActionBot |
-| **Minescript** | Optional | MinescriptIntegration |
-| **Ollama (local)** | Optional | OllamaBotModule |
-| **HuggingFace API token** | Optional | JourneyRecorderModule |
+- **GrimDuraFirework**  
+	*Description:* Smart firework use to stretch Elytra lifespan.  
+	*Usage:*  
+	*Player:* "How do I save Elytra durability?"  
+	*Skylandia:* "GrimDuraFirework will optimize firework usage for you."
+
+- **SignHistorian**  
+	*Description:* Archives and restores sign text history.  
+	*Usage:*  
+	*Player:* "Can I recover a broken sign's text?"  
+	*Skylandia:* "SignHistorian keeps a log and can restore sign text."
+
+- **Pitch40Util**  
+	*Description:* Locks optimal pitch 40 for height/velocity gain.  
+	*Usage:*  
+	*Player:* "How do I maximize flight speed?"  
+	*Skylandia:* "Pitch40Util locks your pitch for best Elytra performance."
+
+- **GrimEfly**  
+	*Description:* Advanced Elytra flight with on-the-fly chestplate swapping.  
+	*Usage:*  
+	*Player:* "Can I swap to a chestplate mid-flight?"  
+	*Skylandia:* "GrimEfly automates Elytra and chestplate swapping."
+
+- **SecureChatModule**  
+	*Description:* Encrypted messaging and custom chat filters.  
+	*Usage:*  
+	*Player:* "How do I send secret messages?"  
+	*Skylandia:* "SecureChatModule encrypts your chat and filters spam."
+
+- **AutoLoginModule**  
+	*Description:* Streamlined server login automation.  
+	*Usage:*  
+	*Player:* "Can I auto-login to servers?"  
+	*Skylandia:* "AutoLoginModule will handle login prompts for you."
+
+- **OllamaBotModule**  
+	*Description:* AI-powered chat and automation assistant.  
+	*Usage:*  
+	*Player:* "Can I get AI help in chat?"  
+	*Skylandia:* "OllamaBotModule provides AI chat and automation."
+
+- **BaritonePathing**  
+	*Description:* Integrates full Baritone navigation.  
+	*Usage:*  
+	*Player:* "Can I use Baritone to walk to coordinates?"  
+	*Skylandia:* "BaritonePathing lets you set goals and automates movement."
+
+- **ElytraSwap**  
+	*Description:* Auto-toggles between Elytra and chestplate.  
+	*Usage:*  
+	*Player:* "Can I swap gear automatically?"  
+	*Skylandia:* "ElytraSwap will switch for you based on context."
+
+- **Firework**  
+	*Description:* Fires rockets at boost-end for seamless flight.  
+	*Usage:*  
+	*Player:* "How do I keep flying without stopping?"  
+	*Skylandia:* "Firework module will boost you at the right time."
 
 ---
 
-## 🔑 Access
+### 👁 Render
 
-Skylandia is **private**. Builds are individually authorized. The mod verifies your identity on every launch — if you're not on the list, nothing loads. How this works is not documented here.
+- **HoleAndTunnelAndStairsESP**  
+	*Description:* Highlights navigation-critical terrain features.  
+	*Usage:*  
+	*Player:* "Where are the tunnels and holes?"  
+	*Skylandia:* "Enable this ESP to see them highlighted."
+
+- **PotESP**  
+	*Description:* Flags decorated pots and potion-effect locations.  
+	*Usage:*  
+	*Player:* "Where are the pots with effects?"  
+	*Skylandia:* "PotESP will show them in your render."
+
+- **MobGearESP**  
+	*Description:* Finds mobs wearing player loot.  
+	*Usage:*  
+	*Player:* "Did a mob pick up my gear?"  
+	*Skylandia:* "MobGearESP will highlight mobs with gear."
+
+- **DroppedItemESP**  
+	*Description:* Keeps valuable drops visible.  
+	*Usage:*  
+	*Player:* "Where are my dropped items?"  
+	*Skylandia:* "DroppedItemESP will keep them visible."
+
+- **EntityClusterESP**  
+	*Description:* Shows dense mob/player clusters for farms or raids.  
+	*Usage:*  
+	*Player:* "Where are the mob clusters?"  
+	*Skylandia:* "EntityClusterESP will show you clusters on the map."
+
+- **VanityESP**  
+	*Description:* Highlights maparts and banners for collectors.  
+	*Usage:*  
+	*Player:* "Where are the banners and maparts?"  
+	*Skylandia:* "VanityESP will highlight them for you."
+
+- **RoleTags**  
+	*Description:* Displays team roles above player heads.  
+	*Usage:*  
+	*Player:* "Who is on my team?"  
+	*Skylandia:* "RoleTags will show roles above players."
+
+- **CrystalPositionESP**  
+	*Description:* Visualizes crystal placements for PvP control.  
+	*Usage:*  
+	*Player:* "Where should I place crystals?"  
+	*Skylandia:* "CrystalPositionESP will show optimal spots."
+
+- **DamageNumbersModule**  
+	*Description:* Real-time damage readouts in combat.  
+	*Usage:*  
+	*Player:* "How much damage am I doing?"  
+	*Skylandia:* "DamageNumbersModule will show numbers above targets."
+
+- **OldChunkNotifier**  
+	*Description:* Alerts when entering historically loaded chunks.  
+	*Usage:*  
+	*Player:* "Is this an old chunk?"  
+	*Skylandia:* "OldChunkNotifier will notify you."
 
 ---
 
-## 📥 Getting Access
+### 🤖 Automation
 
-Access is earned through Lotus Clan membership or meaningful contribution — not purchased.
+- **Minescript Integration**  
+	*Description:* In-game script editor and launcher — create, edit, save, and run Minescript Python scripts directly from the Skylandia UI.
 
-1. **Join the Discord:** [discord.gg/bVcSMMMsbm](https://discord.gg/bVcSMMMsbm)
-2. **Participate:** Contribute to the clan, the codebase, or the community.
-3. **Get reviewed:** Leadership extends access to approved members.
-4. **Receive your build:** An authorized JAR with your account registered.
+- **AFKVanillaFly**  
+	*Description:* Maintains smooth AFK flight for long trips.  
+	*Usage:*  
+	*Player:* "Can I fly AFK for hours?"  
+	*Skylandia:* "AFKVanillaFly will keep you flying and use fireworks as needed."
+
+- **AreaLoader**  
+	*Description:* Preloads vast map sections for art/chunk prep.  
+	*Usage:*  
+	*Player:* "Can I load a big area for building?"  
+	*Skylandia:* "AreaLoader will automate chunk loading."
+
+- **AutoDropDupe / ItemFrameDupe / duprexion**  
+	*Description:* Experimental duplication routines.  
+	*Usage:*  
+	*Player:* "Can I dupe items?"  
+	*Skylandia:* "Enable these modules and follow instructions for each dupe method."
+
+- **AutoEnchant**  
+	*Description:* Automates enchanting at anvils/tables.  
+	*Usage:*  
+	*Player:* "Can I enchant items automatically?"  
+	*Skylandia:* "AutoEnchant will handle the process for you."
+
+- **AutomationModule**  
+	*Description:* General purpose task automator.  
+	*Usage:*  
+	*Player:* "Can I automate repetitive tasks?"  
+	*Skylandia:* "AutomationModule lets you script and automate actions."
+
+- **AutoPortal**  
+	*Description:* Automates Nether portal hops.  
+	*Usage:*  
+	*Player:* "Can I travel through portals automatically?"  
+	*Skylandia:* "AutoPortal will handle portal travel."
+
+- **BaritonePathing**  
+	*Description:* Integrates full Baritone navigation.  
+	*Usage:*  
+	*Player:* "Can I walk to coordinates automatically?"  
+	*Skylandia:* "BaritonePathing will use Baritone to get you there."
+
+- **Boomer**  
+	*Description:* Manages TNT-based attacks.  
+	*Usage:*  
+	*Player:* "Can I automate TNT attacks?"  
+	*Skylandia:* "Boomer will handle TNT placement and detonation."
+
+- **ChunkChestGrid (CCG)**  
+	*Description:* Automated anti-exploration obfuscation tool. Floods a configurable X/Z chunk grid with a dense array of chests to deny enemy scouts usable map data. Supports four placement modes (Grid, Corners, Center Focus, Random), three traversal strategies (Serpentine, Nearest-First, Adjacent Semi-Random), and a full automation pipeline covering Baritone navigation, shulker restocking, wood collection, and on-the-fly chest crafting. Validates completed rows and queues under-filled chunks for revisit. Optionally expands the grid automatically on completion.  
+	*Usage:*  
+	*Player:* "How do I stop enemies from mapping our cave network?"  
+	*Skylandia:* "Enable ChunkChestGrid and configure your grid size. It will navigate every chunk, place chests in a saturating pattern, and restock itself — leaving scouts with a region that is operationally impossible to interpret."
+
+- **CrashSuite**  
+	*Description:* Controlled crash testing toolkit.  
+	*Usage:*  
+	*Player:* "Can I test server crash exploits?"  
+	*Skylandia:* "CrashSuite provides safe crash testing tools."
+
+- **DemonCrystal**  
+	*Description:* Automates crystal PvP placement/breaks.  
+	*Usage:*  
+	*Player:* "Can I automate crystal PvP?"  
+	*Skylandia:* "DemonCrystal will place and break crystals for you."
+
+- **Dualist**  
+	*Description:* Automates dual-wield combat flows.  
+	*Usage:*  
+	*Player:* "Can I fight with two weapons?"  
+	*Skylandia:* "Dualist will automate dual-wielding."
+
+- **ElytraSwap**  
+	*Description:* Auto-toggles between Elytra and chestplate.  
+	*Usage:*  
+	*Player:* "Can I swap gear automatically?"  
+	*Skylandia:* "ElytraSwap will switch for you based on context."
+
+- **Firework**  
+	*Description:* Fires rockets at boost-end for seamless flight.  
+	*Usage:*  
+	*Player:* "How do I keep flying without stopping?"  
+	*Skylandia:* "Firework module will boost you at the right time."
+
+- **Printer**  
+	*Description:* Automated building via block placement.  
+	*Usage:*  
+	*Player:* "Can I build structures automatically?"  
+	*Skylandia:* "Printer will place blocks for you according to a schematic."
+
+- **ShulkerTransportModule / SmartShulkerManager**  
+	*Description:* Inventory and storage logistics.  
+	*Usage:*  
+	*Player:* "Can I manage shulker boxes automatically?"  
+	*Skylandia:* "These modules will automate shulker management and transport."
+
+- **SkylandiaHammer**  
+	*Description:* Automated mining assistant.  
+	*Usage:*  
+	*Player:* "Can I mine large areas automatically?"  
+	*Skylandia:* "SkylandiaHammer will mine for you."
+
+- **TridentDupe / Tridentus / TridentAura**  
+	*Description:* Trident duplication and automation for travel/PvP.  
+	*Usage:*  
+	*Player:* "Can I automate trident use?"  
+	*Skylandia:* "Enable these modules for trident automation and dupe routines."
+
+---
+
+*For each module, open the Meteor Client GUI, find the module under its category, and toggle or configure as needed. Most modules have settings for customization and can be bound to hotkeys for quick access.*
+
+---
+
+## 🔑 Access & Contributions
+
+Skylandia is **private** — available only to **Lotus Clan** members and contributors.
+
+To join:
+1. **Hop in the Discord:** [discord.gg/MjMnsGhe8T](https://discord.gg/MjMnsGhe8T)  
+2. **Contribute meaningfully:** Follow the clan's published contribution guidelines.  
+3. **Wait for review:** Clan approval unlocks access.
+
+---
+
+## ⚙ Installation
+1. Grab the latest JAR from releases (or build from source).  
+2. Drop it into your Meteor Client `mods` folder.  
+3. Launch Minecraft and tweak via the Meteor GUI.
 
 ---
 
 ## ❓ FAQ
+- **Is it public?** — No. Private to contributors and Lotus Clan.  
+- **Which servers?** — Optimized for anarchy/SMP, usable anywhere.  
+- **Who made it?** — Beelzebub4883.  
+- **Dependencies?** — Meteor Client required; some modules use Xaero's Minimap/World Map.
 
-**Is the source code public?** No. Obfuscated authorized builds only.
+---
 
-**Which Minecraft version?** 1.21.4 on Fabric.
-
-**Do I need all dependencies?** No — they unlock additional modules (Baritone, Xaero, Ollama, HuggingFace) but the core suite runs without them.
-
-**My modules aren't loading.** Your username isn't authorized. Contact a Lotus Clan admin in Discord.
+## 🐞 Troubleshooting
+- Missing modules? Confirm Meteor Client + dependencies are installed.  
+- Issues? Join the Discord or open a GitHub issue.  
+- Patched exploits? Some servers disable certain automation.
 
 ---
 
 ## 🙌 Credits
-
-| Role | Person |
-|------|--------|
-| **Author & Lead** | Beelzebub4883 |
-| **Co-developers** | ververybubbla, + contributors |
-| **Community** | Lotus Clan members and testers |
+- **Author:** Beelzebub4883  
+- **Inspired by:** Pioneers of the anarchy community & open‑source modding.  
+- **Thanks to:** Every contributor, tester, and the Lotus Clan.
 
 ---
 
-> *Built to explore, automate, experiment, and push Minecraft's limits.*
-> *Use responsibly. Enjoy the chaos.*
-
-<p align="center">
-  <a href="https://unaveragetech.github.io/Skylandia/">Website</a> •
-  <a href="https://discord.gg/bVcSMMMsbm">Discord</a> •
-  <a href="docs/modules.md">Module Catalog</a>
-</p>
+**Skylandia** is a creator's toolkit — built to explore, automate, experiment, and push Minecraft's limits.  
+Use responsibly. Enjoy the chaos.

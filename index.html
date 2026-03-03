@@ -1,398 +1,481 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Skylandia — Lotus Clan Minecraft Mod</title>
-  <style>
-    :root {
-      --bg: #0a0a0f;
-      --card: #11121a;
-      --border: #1e2030;
-      --accent: #7c5cbf;
-      --accent2: #5cb8bf;
-      --text: #d4d4e0;
-      --muted: #888899;
-      --bright: #f0f0ff;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      line-height: 1.65;
-    }
-    a { color: var(--accent2); text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Skylandia - Minecraft Utility Mod</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
 
-    header {
-      text-align: center;
-      padding: 64px 24px 40px;
-      border-bottom: 1px solid var(--border);
-      background: linear-gradient(180deg, #0e0a1e 0%, var(--bg) 100%);
-    }
-    header h1 {
-      font-size: 3rem;
-      font-weight: 800;
-      letter-spacing: -1px;
-      color: var(--bright);
-      margin-bottom: 12px;
-    }
-    header p.tagline {
-      font-size: 1.15rem;
-      color: var(--muted);
-      max-width: 640px;
-      margin: 0 auto 28px;
-    }
-    .header-badges {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    .badge {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 8px 18px;
-      font-size: 0.88rem;
-      font-weight: 600;
-      color: var(--text);
-      transition: border-color 0.2s;
-    }
-    .badge:hover { border-color: var(--accent); text-decoration: none; }
-    .badge.cta {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #fafaff;
-    }
-    .badge.cta:hover { opacity: 0.9; }
+        @keyframes starTwinkle {
+            0% {
+                opacity: 0.4;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0.4;
+            }
+        }
 
-    main { max-width: 1100px; margin: 0 auto; padding: 0 24px 80px; }
-    section { margin-top: 60px; }
-    h2 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--bright);
-      margin-bottom: 24px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--border);
-    }
-    h3 { font-size: 1.05rem; font-weight: 700; color: var(--bright); margin-bottom: 6px; }
+        .minecraft-btn {
+            background-color: #4CAF50;
+            border: 2px solid #45a049;
+            color: white;
+            padding: 10px 20px;
+            text-transform: uppercase;
+            font-weight: bold;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
 
-    .card-grid {
-      display: grid;
-      gap: 16px;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 22px 22px 18px;
-      transition: border-color 0.2s;
-    }
-    .card:hover { border-color: var(--accent); }
-    .card .icon { font-size: 1.6rem; margin-bottom: 10px; }
-    .card p { font-size: 0.9rem; color: var(--muted); }
-    .card a {
-      display: inline-block;
-      margin-top: 12px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--accent2);
-    }
+        .minecraft-btn:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
+        }
 
-    .wtf-list {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-    .wtf-item {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--accent);
-      border-radius: 8px;
-      padding: 18px 20px;
-      font-size: 0.93rem;
-    }
-    .wtf-item strong { color: var(--bright); }
+        .feature-card {
+            background: rgba(32, 32, 32, 0.9);
+            border: 2px solid #333;
+            transition: all 0.3s;
+        }
 
-    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-    th {
-      text-align: left;
-      padding: 8px 12px;
-      border-bottom: 1px solid var(--border);
-      color: var(--muted);
-      font-weight: 600;
-    }
-    td { padding: 9px 12px; border-bottom: 1px solid var(--border); }
-    tr:last-child td { border-bottom: none; }
-    td:first-child { color: var(--bright); font-weight: 600; }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+            border-color: #4CAF50;
+        }
 
-    code {
-      background: #1a1a28;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 2px 7px;
-      font-size: 0.82rem;
-      font-family: 'Cascadia Code', 'Fira Code', monospace;
-      color: var(--accent2);
-    }
-    pre {
-      background: #0d0d18;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 18px 20px;
-      font-size: 0.82rem;
-      font-family: 'Cascadia Code', 'Fira Code', monospace;
-      color: var(--accent2);
-      overflow-x: auto;
-      line-height: 1.8;
-    }
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            animation: starTwinkle 2s infinite;
+        }
 
-    .access-box {
-      background: linear-gradient(135deg, #12101e, #0e1218);
-      border: 1px solid var(--accent);
-      border-radius: 12px;
-      padding: 34px 36px;
-    }
-    .access-box p { margin-top: 10px; color: var(--muted); font-size: 0.93rem; }
-    .access-steps {
-      margin-top: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .access-step {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-    }
-    .step-num {
-      background: var(--accent);
-      color: #fafaff;
-      font-weight: 700;
-      font-size: 0.85rem;
-      border-radius: 50%;
-      width: 26px;
-      height: 26px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-    .access-step p { margin: 0; font-size: 0.9rem; }
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
 
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 28px 24px;
-      text-align: center;
-      font-size: 0.85rem;
-      color: var(--muted);
-    }
-  </style>
+        .version-tag {
+            background-color: #4CAF50;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.9em;
+            display: inline-block;
+        }
+
+        .changelog-item {
+            border-left: 2px solid #4CAF50;
+            padding-left: 1rem;
+            margin-bottom: 1rem;
+        }
+    </style>
 </head>
-<body>
-
-<header>
-  <h1>🌌 Skylandia</h1>
-  <p class="tagline">A private Meteor Client addon for Minecraft anarchy and SMP.<br/>Built for Lotus Clan by <strong>Beelzebub4883</strong>.</p>
-  <div class="header-badges">
-    <a class="badge" href="https://discord.gg/bVcSMMMsbm">💬 Discord</a>
-    <a class="badge" href="docs/modules.md">📚 Module Catalog</a>
-    <a class="badge" href="docs/features/trail-discovery.md">🧭 Trail Discovery</a>
-    <a class="badge" href="docs/features/demon-crystal.md">💎 DemonCrystal</a>
-    <a class="badge cta" href="#access">🔑 Get Access</a>
-  </div>
-</header>
-
-<main>
-
-  <section>
-    <h2>Things Skylandia Does That You Haven't Seen Before</h2>
-    <div class="wtf-list">
-
-      <div class="wtf-item">
-        <strong>ChunkChestGrid is an obfuscation module — the first of its kind.</strong> Its purpose is to negatively impact enemy stash scanners and tracers by autonomously blanketing a region in a semi-random or configured number of chests. Up to 50&times;50 chunks. Potentially 50,000+ chest placements. Every chest tracer, container scanner, and BetterStashFinder-type tool your enemy runs returns thousands of valid hits — none of which matter. It handles its own wood supply, crafting, and routing so it runs indefinitely while you're offline.
-      </div>
-
-      <div class="wtf-item">
-        <strong>ElytraSwap repairs your elytras in mid-air without landing.</strong> It throws Bottles o' Enchanting upward at a configured angle so the XP orbs arc back down onto you. When the bottles run out, it opens shulker boxes in your inventory to get more. Your elytra supply manages itself for the entire session.
-      </div>
-
-      <div class="wtf-item">
-        <strong>GrimEfly detects portal traps before you fly into them.</strong> On every chunk load, it scans incoming terrain for portal frame structures. If one is within threshold distance of your highway, Baritone reroutes around it before you're ever in range.
-      </div>
-
-      <div class="wtf-item">
-        <strong>DemonCrystal is a self-tuning combat AI with 50 setting groups.</strong> It tracks damage-per-second, hit success rate, and strategy effectiveness per fight and adjusts placement range, rotation speed, burst timing, and crystal count automatically. It runs eight attack strategies and switches between them via a live fallback system when the current one stops working.
-      </div>
-
-      <div class="wtf-item">
-        <strong>Journey Recorder's AI knows who you are.</strong> Provide a user profile (<code>"solo stash hunter, values secrecy"</code>) and a story theme (<code>"noir"</code>). The AI writes your sessions as your character, in your genre. Incremental refinement rewrites the story as you play so the final output is a cohesive narrative.
-      </div>
-
-      <div class="wtf-item">
-        <strong>Multiple Skylandia instances share their exploration data in real time.</strong> CoordPoppy uses Meteor's Swarm system to sync chunk classifications, entity positions, and Trails data across all connected accounts every 10 seconds.
-      </div>
-
-      <div class="wtf-item">
-        <strong>TrailFollower has a POI block list.</strong> Add any block type. When those blocks appear in a newly loaded chunk, TrailFollower steers toward it. Add crying obsidian. Add ancient debris. It hunts whatever you configure.
-      </div>
-
-      <div class="wtf-item">
-        <strong>Trails fires Discord @mentions for specific chunk types.</strong> Configure a separate Discord webhook and ping ID per type. Only <code>TICK_EXPLOIT</code> chunks ping you directly.
-      </div>
-
+<body class="bg-gray-900 text-gray-100">
+<!-- Navigation -->
+<nav class="bg-gray-800 border-b border-green-600 fixed w-full z-50">
+    <div class="container mx-auto px-6 py-3">
+        <div class="flex justify-between items-center">
+            <div class="text-2xl font-bold text-green-500">Skylandia</div>
+            <div class="hidden md:flex space-x-8">
+                <a class="hover:text-green-500 transition-colors" href="#">Home</a>
+                <a class="hover:text-green-500 transition-colors" href="#features">Features</a>
+                <a class="hover:text-green-500 transition-colors" href="#access">Access</a>
+                <a class="hover:text-green-500 transition-colors" href="#releases">Releases</a>
+                <a class="hover:text-green-500 transition-colors" href="#installation">Installation</a>
+                <a class="hover:text-green-500 transition-colors" href="#support">Support</a>
+                <a class="hover:text-green-500 transition-colors"
+                   href="https://github.com/FaxHack/Skylandia">GitHub</a>
+            </div>
+        </div>
     </div>
-  </section>
+</nav>
 
-  <section>
-    <h2>Feature Deep-Dives</h2>
-    <div class="card-grid">
-
-      <div class="card">
-        <div class="icon">🧭</div>
-        <h3>Trail Discovery System</h3>
-        <p>Trails (8 detection methods, 5 chunk types), TrailFollower, AFKVanillaFly, CoordPoppy (14 subsystems), and BetterStashFinder's detection architecture. Every piece documented from source.</p>
-        <a href="docs/features/trail-discovery.md">→ Full deep-dive</a>
-      </div>
-
-      <div class="card">
-        <div class="icon">💎</div>
-        <h3>DemonCrystal</h3>
-        <p>50 setting groups. Self-tuning combat AI with PerformanceMetrics and StrategyEffectiveness tracking. CEV state machine. Eight attack strategies with live fallback switching. PlaceData box-scan architecture.</p>
-        <a href="docs/features/demon-crystal.md">→ Full deep-dive</a>
-      </div>
-
-      <div class="card">
-        <div class="icon">📖</div>
-        <h3>Journey Recorder</h3>
-        <p>20 recording categories. AI with user-profile-prompt personalization, story-theme genre setting, incremental refinement mid-session, and auto-integration of story segments. ElytraSwap mid-air repair.</p>
-        <a href="docs/features/journey-recorder.md">→ Full deep-dive</a>
-      </div>
-
-      <div class="card">
-        <div class="icon">📦</div>
-        <h3>ChunkChestGrid &amp; Transport</h3>
-        <p>The obfuscation engine: 7-state autonomous supply chain blankets 2,500 chunks with configurable randomized chest patterns to destroy enemy scanner accuracy. Plus ShulkerTransport 10-file pipeline and SecureChat encryption.</p>
-        <a href="docs/features/shulker-transport.md">→ Full deep-dive</a>
-      </div>
-
+<!-- Hero Section -->
+<div class="relative min-h-screen flex items-center justify-center pt-16">
+    <div id="stars-container"></div>
+    <div class="text-center px-6">
+        <h1 class="text-6xl font-bold mb-4 floating">Skylandia</h1>
+        <p class="text-xl mb-8 text-green-400">Your Ultimate Tool for Anarchy Gameplay</p>
+        <p class="max-w-2xl mx-auto mb-8 text-gray-300">
+            Enhance your Minecraft experience with powerful features designed specifically for anarchy servers.
+            Find bases, detect patterns, and dominate the game with advanced utilities.
+        </p>
+        <a class="minecraft-btn inline-block" href="https://github.com/FaxHack/Skylandia/releases/latest">
+            Download Latest Version
+        </a>
     </div>
-  </section>
+</div>
 
-  <section>
-    <h2>Module Categories</h2>
-    <table>
-      <thead>
-        <tr><th>Category</th><th>Key Modules</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>🧭 Exploration</td>
-          <td>Trails, TrailFollower, AFKVanillaFly, CoordPoppy, BetterStashFinder (9 structure detectors), SmartActionBot (LLM+Baritone), BaseFinder, CaveDisturbanceDetector, SkyportalFinder</td>
-        </tr>
-        <tr>
-          <td>⚙️ Automation</td>
-          <td>DemonCrystal (50 groups, self-tuning), ChunkChestGrid (<strong>obfuscation engine</strong> — first of its kind, 2,500-chunk false-positive field), ShulkerTransportModule (10-file pipeline), AIRraid, AutoPromo (Wither), Printer, Dualist, AreaLoader</td>
-        </tr>
-        <tr>
-          <td>🛠️ Utility</td>
-          <td>GrimEfly (portal trap detection, zero elytra durability), ElytraSwap (mid-air repair), OllamaBotModule (local LLM), SecureChatModule (3-channel encrypted), GrimDuraFirework, JourneyRecorderModule</td>
-        </tr>
-        <tr>
-          <td>👁️ Render</td>
-          <td>CoordPoppy, HoleAndTunnelAndStairsESP (1024-chunk range), VanityESP (maparts/banners/signs), DamageNumbersModule, EntityClusterESP, DemonCrystalHUD</td>
-        </tr>
-        <tr>
-          <td>🍩 Loukoumades</td>
-          <td>TunnelBaseFinder (RTP→dig→tunnel hunt with webhook), AutoSell, RainNoti</td>
-        </tr>
-        <tr>
-          <td>🐍 Minescript</td>
-          <td>In-game Python editor, programmatic triggering from any other module, full Minescript API access</td>
-        </tr>
-      </tbody>
-    </table>
-    <p style="margin-top: 14px; font-size: 0.88rem; color: var(--muted);"><a href="docs/modules.md">→ Browse the full catalog with all settings documented</a></p>
-  </section>
-
-  <section>
-    <h2>How Modules Talk to Each Other</h2>
-    <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 20px;">This is not a collection of isolated features. Systems are designed to feed each other.</p>
-    <pre>
-Trails classifies every loaded chunk (8 methods, 5 types)
-    &darr; feeds bearing weights to
-TrailFollower steers toward old/player-touched terrain
-    with POI block steering, Destination waypoint mode,
-    per-waypoint Discord webhooks, anti-AFK randomization
-    &darr; hands long legs to
-AFKVanillaFly sustains flight through a path
-    that routes specifically through those old chunks
-    &darr; all three feed data to
-CoordPoppy maps the operation, overlays Trails types,
-    shows TrailFollower's bearing, runs Randar on players,
-    syncs everything to swarm-connected accounts every 10s
-    fires Discord webhooks on entity/structure detection
-
-ChunkChestGrid runs overnight on the same region,
-    blanketing it with 50,000+ randomized chest placements
-    so any enemy scanner loading the area sees only noise</pre>
-  </section>
-
-  <section>
-    <h2>Dependencies</h2>
-    <table>
-      <thead>
-        <tr><th>Dependency</th><th>Required</th><th>Unlocks</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>Meteor Client</td><td>✅ Yes</td><td>Core framework</td></tr>
-        <tr><td>Fabric Loader + MC 1.21.4</td><td>✅ Yes</td><td>Mod loader</td></tr>
-        <tr><td>Xaero's Minimap + World Map + XaeroPlus</td><td>Optional</td><td>Trails, BetterStashFinder, CoordPoppy, TrailFollower Destination Mode</td></tr>
-        <tr><td>Baritone</td><td>Optional</td><td>GrimEfly obstacle passer, ChunkChestGrid supply chain, TrailFollower Smart mode, SmartActionBot</td></tr>
-        <tr><td>Minescript</td><td>Optional</td><td>MinescriptIntegration scripting layer</td></tr>
-        <tr><td>Ollama (local)</td><td>Optional</td><td>OllamaBotModule</td></tr>
-        <tr><td>HuggingFace API token</td><td>Optional</td><td>JourneyRecorderModule AI generation</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section id="access">
-    <h2>🔑 Getting Access</h2>
-    <div class="access-box">
-      <h3>Skylandia is private. Builds are individually authorized.</h3>
-      <p>The mod verifies your identity on every launch. If you're not on the list, nothing loads. Access is earned through Lotus Clan membership or meaningful contribution &mdash; not purchased.</p>
-      <div class="access-steps">
-        <div class="access-step">
-          <div class="step-num">1</div>
-          <p><strong>Join the Discord:</strong> <a href="https://discord.gg/bVcSMMMsbm">discord.gg/bVcSMMMsbm</a></p>
+<!-- Features Section -->
+<section class="py-20 bg-gray-800" id="features">
+    <div class="container mx-auto px-6">
+        <h2 class="text-4xl font-bold text-center mb-16 text-green-500">Features</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-4 text-green-400">Advanced Chunk Detection</h3>
+                <p class="text-gray-300">Identify new and modified chunks with precision, perfect for base hunting.</p>
+            </div>
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-4 text-green-400">Base Finder</h3>
+                <p class="text-gray-300">Sophisticated algorithms to detect potential base locations and player
+                    activity.</p>
+            </div>
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-4 text-green-400">Storage Looter</h3>
+                <p class="text-gray-300">Efficiently manage and search through storage systems with enhanced
+                    visibility.</p>
+            </div>
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-4 text-green-400">StackedMinecartDetector</h3>
+                <p class="text-gray-300">Detects for hidden stacked spawner is in the area.</p>
+            </div>
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-4 text-green-400">GrimDuraFirework</h3>
+                <p class="text-gray-300">A clever fix for fireworks issues on the Mio client when using Grim Durability
+                    ElytraFly with a chestplate. Fly smoothly without a hitch!</p>
+            </div>
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-4 text-green-400">ESP Features</h3>
+                <p class="text-gray-300">Comprehensive ESP system including PotESP, HoleESP, and MobGearESP.</p>
+            </div>
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-4 text-green-400">Chunk Chest Grid (CCG)</h3>
+                <p class="text-gray-300">Automated territory-denial module. Floods a configurable chunk grid with a dense chest array to corrupt enemy map data and make large underground regions impossible to scout. Fully self-sufficient — handles navigation, restocking, and chest crafting autonomously.</p>
+            </div>
         </div>
-        <div class="access-step">
-          <div class="step-num">2</div>
-          <p><strong>Participate:</strong> Contribute to the clan, the codebase, or the community.</p>
-        </div>
-        <div class="access-step">
-          <div class="step-num">3</div>
-          <p><strong>Get reviewed:</strong> Leadership extends access to approved members.</p>
-        </div>
-        <div class="access-step">
-          <div class="step-num">4</div>
-          <p><strong>Receive your build:</strong> An authorized JAR with your account registered.</p>
-        </div>
-      </div>
     </div>
-  </section>
+</section>
 
-</main>
+<!-- Access & Security Section -->
+<section class="py-20" id="access">
+    <div class="container mx-auto px-6">
+        <h2 class="text-4xl font-bold text-center mb-4 text-green-500">Access &amp; Security</h2>
+        <p class="text-center text-gray-400 mb-16 max-w-2xl mx-auto">
+            Skylandia is a closed, member-only addon. Every copy is individually authorized —
+            the mod verifies your identity on every launch before any features become available.
+        </p>
+        <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-3 text-green-400">&#128274; Whitelist Only</h3>
+                <p class="text-gray-300">
+                    Access is granted exclusively to approved Lotus Clan members and contributors.
+                    Your username must appear in the authorized list embedded inside the JAR itself —
+                    no external list, no workaround.
+                </p>
+            </div>
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-3 text-green-400">&#128100; UUID Verification</h3>
+                <p class="text-gray-300">
+                    Beyond a username check, Skylandia optionally verifies your Mojang UUID against
+                    a registered mapping. Even if someone knows your username, they cannot load the
+                    mod without your exact account UUID matching the record.
+                </p>
+            </div>
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-3 text-green-400">&#128196; Per-Launch Validation</h3>
+                <p class="text-gray-300">
+                    The whitelist is regenerated and re-signed from the JAR on every single launch.
+                    Local copies are never trusted — the JAR is always the source of truth, making
+                    it impossible to tamper with access records between sessions.
+                </p>
+            </div>
+        </div>
+        <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-3 text-green-400">&#128272; Signature Verification</h3>
+                <p class="text-gray-300">
+                    Every whitelist file is cryptographically signed at write time. If the signature
+                    is missing, expired, or doesn't match — access is denied to everyone, even valid
+                    users. There is no silent fallback or grace mode.
+                </p>
+            </div>
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-3 text-green-400">&#127981; API-Backed Identity</h3>
+                <p class="text-gray-300">
+                    UUID lookups are performed against the official Mojang API with an automatic
+                    fallback to a secondary source for reliability. Your identity is confirmed
+                    against Mojang's own records, not just a local string.
+                </p>
+            </div>
+        </div>
+        <div class="max-w-3xl mx-auto mt-16 feature-card p-8 rounded-lg text-center">
+            <h3 class="text-2xl font-bold mb-4 text-green-400">Want Access?</h3>
+            <p class="text-gray-300 mb-6">
+                Access is earned, not purchased. Join the Lotus Clan Discord, contribute to the
+                community, and get reviewed. Approved members are added to the whitelist and
+                receive an authorized build.
+            </p>
+            <a class="minecraft-btn inline-block" href="https://discord.gg/MjMnsGhe8T">Join the Discord</a>
+        </div>
+    </div>
+</section>
 
-<footer>
-  <p>Skylandia &mdash; Built for Lotus Clan. Crafted by <strong>Beelzebub4883</strong> &amp; contributors.</p>
-  <p style="margin-top: 6px;"><a href="https://discord.gg/bVcSMMMsbm">Discord</a> &nbsp;&bull;&nbsp; <a href="https://github.com/unaveragetech/Skylandia">GitHub</a> &nbsp;&bull;&nbsp; <a href="docs/modules.md">Module Catalog</a></p>
+<!-- Releases Section -->
+<section class="py-20" id="releases">
+    <div class="container mx-auto px-6">
+        <h2 class="text-4xl font-bold text-center mb-16 text-green-500">Latest Releases</h2>
+
+        <!-- Latest Release -->
+        <div class="max-w-4xl mx-auto mb-12">
+            <div class="feature-card p-6 rounded-lg">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-green-400">Latest Release</h3>
+                    <span class="version-tag">v1.0.6</span>
+                </div>
+                <div class="changelog-item">
+                    <h4 class="font-bold mb-2">What's New:</h4>
+                    <ul class="list-disc ml-4 mb-4">
+                        <li><strong>BetterStashFinder:</strong> An upgraded stash finder with additional filtering
+                            options.
+                        </li>
+                        <li><strong>AutoEnchanter:</strong> Automates enchanting at anvils, saving time.</li>
+                        <li><strong>GrimEfly:</strong> Vanilla efly using a chestplate so that elytra does not use
+                            durability.
+                        </li>
+                        <li><strong>Trident Dupe:</strong> Enables trident duplication (note: patched on most servers).
+                        </li>
+                        <li><strong>AutoFirework:</strong> Automatically triggers firework use for extra flair.</li>
+                    </ul>
+                </div>
+                <div class="changelog-item">
+                    <h4 class="font-bold mb-2">Current Features:</h4>
+                    <ul class="list-disc ml-4 mb-4">
+                        <h5 class="font-semibold mt-2">Utility:</h5>
+                        <li>ActivatedSpawnerDetector: Detects activated spawners nearby</li>
+                        <li>SignHistorian: Record and restore broken or modified signs</li>
+                        <li>ElytraSwap: Automatic elytra management</li>
+                        <li>NoJumpDelay: Removes delay between jumps</li>
+                        <li><strong>GrimEfly:</strong> Vanilla efly using a chestplate so that elytra does not use
+                            durability.
+                        </li>
+
+                        <h5 class="font-semibold mt-2">Exploration:</h5>
+                        <li>Base Finder: Advanced base detection for anarchy servers</li>
+                        <li>NewChunks: Identify newly generated chunks</li>
+                        <li>PortalPatternFinder: Locate broken/removed Nether Portals</li>
+                        <li>CaveDisturbanceDetector: Detect minor cave disruptions</li>
+                        <li>TrailFollower: Follows trails using pitch40 or baritone (Requires XaeroPlus)</li>
+                        <li>Pitch40Util: Height gain and velocity management</li>
+
+                        <h5 class="font-semibold mt-2">Renders:</h5>
+                        <li>Hole, Tunnel, and Stair ESP</li>
+                        <li>PotESP: Decorated Pot tracking</li>
+                        <li>MobGearESP: Player equipment detection on mobs</li>
+                        <li>StackedMinecartDetector: Stacked spawner detection</li>
+                        <li>EntityClusterESP: Entity cluster center point highlighting</li>
+                        <li>DroppedItemESP: Important item highlighting</li>
+
+                        <h5 class="font-semibold mt-2">Automation:</h5>
+                        <li>StorageLooter: Automatically loots containers and organizes items</li>
+                        <li><strong>ChunkChestGrid (CCG):</strong> Territory-denial module — saturates a chunk grid with chests to obfuscate enemy exploration; self-managed navigation, restocking, and crafting pipeline.</li>
+                        <li><strong>Trident Dupe:</strong> Enables trident duplication (note: patched on most servers).
+                        </li>
+                        <li><strong>AutoFirework:</strong> Automatically triggers firework use for extra flair.</li>
+                        <li><strong>AutoEnchanter:</strong> Automates enchanting at anvils, saving time.</li>
+                    </ul>
+                </div>
+                <div class="changelog-item">
+                    <h4 class="font-bold mb-2">Known Issues:</h4>
+                    <ul class="list-disc ml-4 mb-4">
+                        <li>Minor rendering glitches during dimension transitions</li>
+                        <li>Rare server-side compatibility issues with certain chunk detection methods</li>
+                    </ul>
+                </div>
+                <div class="mt-6">
+                    <a class="minecraft-btn inline-block"
+                       href="https://github.com/FaxHack/Skylandia/releases/tag/v1.0.6">
+                        Download v1.0.6
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Previous Releases -->
+        <div class="max-w-4xl mx-auto">
+            <h3 class="text-xl font-bold mb-6 text-green-400">Previous Releases</h3>
+            <div class="grid grid-cols-1 gap-6">
+                <div class="feature-card p-6 rounded-lg">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-lg font-bold">Version 1.0.4</h4>
+                        <span class="version-tag">v1.0.4</span>
+                    </div>
+                    <ul class="list-disc ml-4 mb-4">
+                        <li><strong>StackedMinecartDetector:</strong> Detects if stacked spawner is in the area</li>
+                        <li><strong>EntityClusterESP:</strong> Highlights the centre point of entity clusters</li>
+                        <li><strong>DroppedItemESP:</strong> Highlights important dropped items</li>
+                        <li><strong>ScreenshotFolderCommand:</strong> Open Minecraft screenshot folder</li>
+                        <li><strong>MeteorFolderCommand:</strong> Open meteor-client folder</li>
+                    </ul>
+                    <a class="text-green-400 hover:text-green-500"
+                       href="https://github.com/FaxHack/Skylandia/releases/tag/v1.0.5">View Release →</a>
+                </div>
+
+                <div class="feature-card p-6 rounded-lg">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-lg font-bold">Version 1.0.4</h4>
+                        <span class="version-tag">v1.0.4</span>
+                    </div>
+                    <ul class="list-disc ml-4 mb-4">
+                        <li><strong>TrailFollower:</strong> New trail following system</li>
+                        <li><strong>Pitch40Util:</strong> Advanced height gain management</li>
+                        <li><strong>NoJumpDelay:</strong> Jump delay removal system</li>
+                    </ul>
+                    <a class="text-green-400 hover:text-green-500"
+                       href="https://github.com/FaxHack/Skylandia/releases/tag/v1.0.4">View Release →</a>
+                </div>
+
+                <div class="feature-card p-6 rounded-lg">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-lg font-bold">Version 1.0.3</h4>
+                        <span class="version-tag">v1.0.3</span>
+                    </div>
+                    <ul class="list-disc ml-4 mb-4">
+                        <li><strong>SignHistorian:</strong> Record and restore broken or modified signs</li>
+                        <li><strong>ElytraSwap:</strong> Automatic elytra swapping</li>
+                        <li><strong>ActivatedSpawnerDetector:</strong> New configuration options</li>
+                        <li><strong>SkylandiaUtils:</strong> Code refactoring and API fixes</li>
+                    </ul>
+                    <a class="text-green-400 hover:text-green-500"
+                       href="https://github.com/FaxHack/Skylandia/releases/tag/v1.0.3">View Release →</a>
+                </div>
+
+                <div class="feature-card p-6 rounded-lg">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-lg font-bold">Version 1.0.2</h4>
+                        <span class="version-tag">v1.0.2</span>
+                    </div>
+                    <ul class="list-disc ml-4 mb-4">
+                        <li>Added NewChunks detection system</li>
+                        <li>Improved Base Finder algorithm</li>
+                        <li>Added MobGearESP feature</li>
+                    </ul>
+                    <a class="text-green-400 hover:text-green-500"
+                       href="https://github.com/FaxHack/Skylandia/releases/tag/v1.0.2">View Release →</a>
+                </div>
+
+                <div class="feature-card p-6 rounded-lg">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-lg font-bold">Version 1.0.1</h4>
+                        <span class="version-tag">v1.0.1</span>
+                    </div>
+                    <ul class="list-disc ml-4 mb-4">
+                        <li>Added PotESP feature</li>
+                        <li>Improved tunnel detection</li>
+                        <li>Fixed compatibility issues</li>
+                    </ul>
+                    <a class="text-green-400 hover:text-green-500"
+                       href="https://github.com/FaxHack/Skylandia/releases/tag/v1.0.1">View Release →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Installation Section -->
+<section class="py-20 bg-gray-800" id="installation">
+    <div class="container mx-auto px-6">
+        <h2 class="text-4xl font-bold text-center mb-16 text-green-500">Installation</h2>
+        <div class="max-w-3xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <a class="text-center p-6 feature-card rounded-lg"
+                   href="https://github.com/FaxHack/Skylandia/releases/latest">
+                    <div class="text-3xl mb-4">1</div>
+                    <p>Download the mod from GitHub Releases</p>
+                </a>
+                <div class="text-center p-6 feature-card rounded-lg">
+                    <div class="text-3xl mb-4">2</div>
+                    <p>Place the .jar file in your mods folder</p>
+                </div>
+                <div class="text-center p-6 feature-card rounded-lg">
+                    <div class="text-3xl mb-4">3</div>
+                    <p>Launch Minecraft and enjoy!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Support Section -->
+<section class="py-20" id="support">
+    <div class="container mx-auto px-6">
+        <h2 class="text-4xl font-bold text-center mb-16 text-green-500">Support</h2>
+        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-4 text-green-400">Community</h3>
+                <p class="mb-4">Join our Discord community for help and updates:</p>
+                <a class="minecraft-btn inline-block" href="https://discord.gg/kjjqEgghxj">Join Discord</a>
+            </div>
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-4 text-green-400">Issues & Bugs</h3>
+                <p class="mb-4">Report issues on our GitHub page:</p>
+                <a class="minecraft-btn inline-block" href="https://github.com/FaxHack/Skylandia/issues">GitHub
+                    Issues</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-gray-900 border-t border-green-600 py-8">
+    <div class="container mx-auto px-6">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+            <div class="mb-4 md:mb-0">
+                <p>&copy; 2025 Skylandia. All rights reserved.</p>
+            </div>
+            <div class="flex space-x-6">
+                <a class="hover:text-green-500 transition-colors"
+                   href="https://github.com/FaxHack/Skylandia">GitHub</a>
+                <a class="hover:text-green-500 transition-colors" href="https://discord.gg/kjjqEgghxj">Discord</a>
+                <a class="hover:text-green-500 transition-colors"
+                   href="https://github.com/FaxHack/Skylandia/graphs/contributors">Contributors</a>
+            </div>
+        </div>
+    </div>
 </footer>
 
+<script>
+    // Add animated stars to the background
+    const starsContainer = document.getElementById('stars-container');
+    for (let i = 0; i < 50; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = Math.random() * 100 + 'vw';
+        star.style.top = Math.random() * 100 + 'vh';
+        star.style.animationDelay = Math.random() * 2 + 's';
+        starsContainer.appendChild(star);
+    }
+
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+</script>
 </body>
 </html>
