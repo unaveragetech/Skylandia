@@ -2,24 +2,9 @@
 
 > *Two accounts. Two dimensions. One automated logistics pipeline.*
 
----
-
-Moving items between the Overworld and the End on an anarchy server is one of the most logistically demanding tasks in the game. It requires timing, precision, multi-account coordination, and no room for error — because the End is not a forgiving place to be holding someone else's gear.
+Moving items between the Overworld and the End on an anarchy server is one of the most logistically demanding tasks in the game. It requires timing, precision, multi-account coordination, and no room for error.
 
 The Shulker Transport System automates the entire process.
-
----
-
-## The Problem It Solves
-
-On large anarchy servers, high-value item storage and transfer between dimensions requires:
-
-1. Two players in the right positions at the right time
-2. Exact pearl stasis chamber timing
-3. Confirmation before irreversible inventory transfers
-4. A recovery path if anything goes wrong
-
-Manual coordination fails. This system doesn't.
 
 ---
 
@@ -46,21 +31,73 @@ No step happens automatically without verification of the previous one.
 
 ## Safety Design
 
-The system is built around the assumption that things go wrong:
-
-- Every transfer requires **explicit confirmation** from the Transporter before execution
-- Items on the **blacklist** cannot be transferred — protecting valuables from accidental movement
-- If the stasis chamber state is invalid, the sequence **stops and holds** rather than proceeding
-- Timeout thresholds on every coordinated step — if either account stops responding, the system halts safely
+- Every transfer requires **explicit confirmation** before execution
+- Items on the **blacklist** cannot be transferred — protects valuables from accidental movement
+- If the stasis chamber state is invalid the sequence **stops and holds**
+- Timeout thresholds on every coordinated step — if either account stops responding, the system halts
 - Full **rollback logic** if a step fails partway through
+- Inter-account communication runs over **SecureChat** — the encrypted Skylandia channel
 
 ---
 
-## Communication
+## ChunkChestGrid — Building the Storage Network
 
-The two accounts coordinate over Skylandia's SecureChat channel — an encrypted in-game messaging layer.
+Before you can transport items, you need somewhere to store them. **ChunkChestGrid** builds that infrastructure automatically.
+
+ChunkChestGrid places storage containers in a systematic grid across a configurable area of chunks:
+
+**Grid configuration:**
+- X and Z grid sizes up to 50×50 chunks
+- Expand-on-complete: when the grid is done, automatically adds more rows and continues
+- Variable chest count per chunk (random within a min/max range) or fixed count
+
+**Placement modes:**
+
+| Mode | Behavior |
+|------|----------|
+| `Random` | Scattered placement within the chunk |
+| `Grid Pattern` | Evenly spaced grid within each chunk |
+| `Corners` | Places only at chunk corners |
+| `Center Focus` | Concentrates toward the center of each chunk |
+
+**Routing modes (how it moves between chunks):**
+
+| Mode | Behavior |
+|------|----------|
+| `Serpentine` | Row by row, reversing direction each pass |
+| `Nearest-First` | Always moves to the closest unprocessed chunk |
+| `Adjacent Semi-Random` | Prefers adjacent chunks with randomized order |
+
+**Inventory management:**
+- Automatically refills from shulker boxes in your inventory when chests run low
+- Optional auto-craft mode: collects wood, crafts chests, continues
+- Tracks current grid state with a HUD overlay
+
+ChunkChestGrid + ShulkerTransportModule is the full stash infrastructure pipeline — build the grid, fill it via automated transfers.
 
 ---
 
-*Part of Skylandia's Automation category.*  
+## SmartShulkerManager
+
+A companion module to both ChunkChestGrid and ShulkerTransportModule. Manages the shulker box lifecycle independently: tracks fill levels, sorts contents by category, and flags shulkers ready for transfer or deployment.
+
+---
+
+## Other Automation Modules
+
+The Automation category is Skylandia’s largest category. Beyond the transport and crystal systems:
+
+### AreaLoader
+Forces chunk loading in a defined area. Used before large builds, mapart preparation, or when you need a region pre-loaded before running other automation modules in it.
+
+### AutoEnchant
+Automates the enchanting workflow. Navigates to an enchanting table, selects the configured enchantment target, cycles through enchantments until the desired result appears, uses the enchanting table, then moves to an anvil to combine if needed.
+
+### EndDimensionProcessModule
+Manages the End dimension entry/exit sequence automatically. Handles the respawn screen acknowledgment, ender dragon fight states, and portal positioning for repeatable automated End runs.
+
+> The Automation category also includes AutoDropDupe, ChristeveDupe, ItemFrameDupe, duprexion, CrashSuite, MassRequester, Dualist, AutoSpeef, Rotation utilities, and more. Each exists for a specific workflow that members of Lotus Clan have needed solved.
+
+---
+
 *Access requires Lotus Clan membership. [→ Find out how to join](../../README.md#-getting-access)*

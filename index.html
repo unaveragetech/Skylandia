@@ -73,6 +73,16 @@
             box-shadow: 0 0 20px rgba(76, 175, 80, 0.2);
             transform: translateY(-3px);
         }
+        .module-pill {
+            display: inline-block;
+            background: rgba(76,175,80,0.12);
+            border: 1px solid #2d5a2d;
+            border-radius: 4px;
+            padding: 1px 7px;
+            font-size: 0.75rem;
+            color: #7bcf7b;
+            margin: 2px;
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-100">
@@ -81,13 +91,13 @@
     <div class="container mx-auto px-6 py-3">
         <div class="flex justify-between items-center">
             <div class="text-2xl font-bold text-green-500">Skylandia</div>
-            <div class="hidden md:flex space-x-8">
+            <div class="hidden md:flex space-x-6">
                 <a class="hover:text-green-500 transition-colors" href="#">Home</a>
                 <a class="hover:text-green-500 transition-colors" href="#features">Features</a>
                 <a class="hover:text-green-500 transition-colors" href="#deep-dives">Deep Dives</a>
+                <a class="hover:text-green-500 transition-colors" href="#modules">Modules</a>
                 <a class="hover:text-green-500 transition-colors" href="#access">Access</a>
                 <a class="hover:text-green-500 transition-colors" href="#releases">Releases</a>
-                <a class="hover:text-green-500 transition-colors" href="#installation">Install</a>
                 <a class="hover:text-green-500 transition-colors" href="#support">Support</a>
                 <a class="hover:text-green-500 transition-colors" href="https://github.com/unaveragetech/Skylandia">GitHub</a>
             </div>
@@ -95,7 +105,7 @@
     </div>
 </nav>
 
-<!-- Hero Section -->
+<!-- Hero -->
 <div class="relative min-h-screen flex items-center justify-center pt-16">
     <div id="stars-container"></div>
     <div class="text-center px-6">
@@ -103,8 +113,8 @@
         <p class="text-xl mb-4 text-green-400">Your Ultimate Tool for Anarchy Gameplay</p>
         <p class="max-w-2xl mx-auto mb-4 text-gray-300">
             A private, member-only Meteor Client addon built for Lotus Clan.
-            Exploration automation. Crystal PvP. AI story generation. Multi-account logistics.
-            If you know, you know. If you don't — keep reading.
+            Exploration automation. Crystal PvP. AI story generation. Randar exploit minimap.
+            Multi-account logistics. Local LLM chat assistant. Six categories. Dozens of modules.
         </p>
         <p class="max-w-xl mx-auto mb-8 text-green-600 text-sm italic">
             Access is earned, not purchased. Join the Discord to find out how.
@@ -121,88 +131,182 @@
         <p class="text-center text-gray-400 mb-16 max-w-2xl mx-auto">Not a module pack. A toolkit built by people who play anarchy seriously.</p>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div class="feature-card p-6 rounded-lg">
-                <h3 class="text-xl font-bold mb-4 text-green-400">&#127981; Autonomous Exploration</h3>
-                <p class="text-gray-300">Trail-following systems that scan, classify, and navigate toward player-touched terrain across thousands of blocks — while you're AFK.</p>
+                <h3 class="text-xl font-bold mb-3 text-green-400">&#127981; Chunk Forensics</h3>
+                <p class="text-gray-300 mb-3">Trails classifies every chunk using 8 detection methods into 5 forensic types. Palette exploit, legacy update detection, dimension-specific old-chunk signatures, real-time packet analysis.</p>
+                <div><span class="module-pill">Trails</span><span class="module-pill">TrailFollower</span><span class="module-pill">CoordPoppy</span></div>
             </div>
             <div class="feature-card p-6 rounded-lg">
-                <h3 class="text-xl font-bold mb-4 text-green-400">&#128142; Crystal PvP Engine</h3>
-                <p class="text-gray-300">60-tick movement prediction. Five multi-crystal modes. Pattern-based placement geometry. The full crystal loop, automated.</p>
+                <h3 class="text-xl font-bold mb-3 text-green-400">&#128142; Crystal PvP Engine</h3>
+                <p class="text-gray-300 mb-3">60-tick movement prediction. Five multi-crystal modes. 15 setting categories. Anti-ghost, anti-suicide, totem monitoring. The full crystal loop, automated.</p>
+                <div><span class="module-pill">DemonCrystal</span><span class="module-pill">CrystalPositionESP</span><span class="module-pill">DemonCrystalHUD</span></div>
             </div>
             <div class="feature-card p-6 rounded-lg">
-                <h3 class="text-xl font-bold mb-4 text-green-400">&#128218; AI Story Generation</h3>
-                <p class="text-gray-300">Journey Recorder tracks what you do and turns it into readable narrative using HuggingFace AI. Your sessions become stories.</p>
+                <h3 class="text-xl font-bold mb-3 text-green-400">&#128218; AI Session Stories</h3>
+                <p class="text-gray-300 mb-3">Journey Recorder tracks what you do with rich context — biome, depth, kill counts, dimension crossings — and generates readable narrative via HuggingFace AI.</p>
+                <div><span class="module-pill">JourneyRecorder</span><span class="module-pill">AIStoryGenerator</span><span class="module-pill">JourneyBookGUI</span></div>
             </div>
             <div class="feature-card p-6 rounded-lg">
-                <h3 class="text-xl font-bold mb-4 text-green-400">&#128230; Dimension Logistics</h3>
-                <p class="text-gray-300">Two-account automated shulker transfer between Overworld and End using stasis chamber coordination and encrypted inter-account chat.</p>
+                <h3 class="text-xl font-bold mb-3 text-green-400">&#128230; Dimension Logistics</h3>
+                <p class="text-gray-300 mb-3">Two-account automated shulker transfer across dimensions. Stasis chamber coordination, item blacklists, encrypted inter-account SecureChat, rollback on failure.</p>
+                <div><span class="module-pill">ShulkerTransport</span><span class="module-pill">ChunkChestGrid</span><span class="module-pill">SmartShulkerManager</span></div>
             </div>
             <div class="feature-card p-6 rounded-lg">
-                <h3 class="text-xl font-bold mb-4 text-green-400">&#128064; ESP & Render Suite</h3>
-                <p class="text-gray-300">PotESP, MobGearESP, DroppedItemESP, EntityClusterESP, HoleESP, CrystalPositionESP, DamageNumbers, and more — all configurable.</p>
+                <h3 class="text-xl font-bold mb-3 text-green-400">&#127757; Randar Minimap</h3>
+                <p class="text-gray-300 mb-3">CoordPoppy integrates the Randar exploit — correlating server RNG seed output with entity spawn positions to locate players remotely without seeing them.</p>
+                <div><span class="module-pill">CoordPoppy</span><span class="module-pill">RemoteEntityDetector</span><span class="module-pill">LocationSpoofer</span></div>
             </div>
             <div class="feature-card p-6 rounded-lg">
-                <h3 class="text-xl font-bold mb-4 text-green-400">&#128196; Minescript Integration</h3>
-                <p class="text-gray-300">Write, edit, save, and run Minescript Python scripts directly inside Minecraft. Extend Skylandia with your own automation logic.</p>
+                <h3 class="text-xl font-bold mb-3 text-green-400">&#129302; Local AI Assistant</h3>
+                <p class="text-gray-300 mb-3">OllamaBotModule routes in-game chat to your local Ollama LLM. 10-message context window, configurable personality, whitelist, respond-to-all mode. Zero external API dependency.</p>
+                <div><span class="module-pill">OllamaBotModule</span><span class="module-pill">SmartActionBot</span></div>
+            </div>
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-3 text-green-400">&#128163; Aerial Bombing</h3>
+                <p class="text-gray-300 mb-3">AIRraid drops TNT while elytra-flying above a configurable altitude. Manages TNT and flint-and-steel slots automatically. Zero manual slot switching mid-run.</p>
+                <div><span class="module-pill">AIRraid</span><span class="module-pill">AFKVanillaFly</span><span class="module-pill">Boomer</span></div>
+            </div>
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-3 text-green-400">&#129449; No-Durability Flight</h3>
+                <p class="text-gray-300 mb-3">GrimEfly uses the chestplate bounce exploit — your elytra never takes damage. Configurable pitch/yaw, obstacle passer, Baritone terrain rerouting.</p>
+                <div><span class="module-pill">GrimEfly</span><span class="module-pill">ElytraSwap</span><span class="module-pill">GrimDuraFirework</span></div>
+            </div>
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-3 text-green-400">&#128100; Wither Automation</h3>
+                <p class="text-gray-300 mb-3">AutoPromo scans for valid Wither construction positions, builds the soul sand pattern, and optionally names the spawned Wither — all without touching a key.</p>
+                <div><span class="module-pill">AutoPromo</span><span class="module-pill">DemonCrystal</span></div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Deep Dives Section -->
+<!-- Deep Dives -->
 <section class="py-20" id="deep-dives">
     <div class="container mx-auto px-6">
         <h2 class="text-4xl font-bold text-center mb-4 text-green-500">Feature Deep Dives</h2>
-        <p class="text-center text-gray-400 mb-16 max-w-2xl mx-auto">Some systems deserve more than a one-liner. Read how the flagship modules actually work.</p>
+        <p class="text-center text-gray-400 mb-16 max-w-2xl mx-auto">Some systems deserve more than a one-liner. Read how the flagship modules actually work — with real settings, real subsystems, and companion module context.</p>
         <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-
             <a class="deep-dive-card p-8 rounded-lg block"
                href="https://github.com/unaveragetech/Skylandia/blob/main/docs/features/trail-discovery.md">
                 <div class="text-3xl mb-3">&#127981;</div>
-                <h3 class="text-xl font-bold mb-2 text-green-400">Trail Discovery System</h3>
-                <p class="text-gray-400 text-sm mb-4">Trails + TrailFollower + AFKVanillaFly</p>
-                <p class="text-gray-300 mb-4">Three modules form an autonomous expedition pipeline. Classify every chunk. Hunt player trails. Sustain AFK flight for hours. Return to a map full of waypoints.</p>
+                <h3 class="text-xl font-bold mb-1 text-green-400">Trail Discovery System</h3>
+                <p class="text-gray-400 text-xs mb-3">Trails &bull; TrailFollower &bull; AFKVanillaFly &bull; CoordPoppy &bull; + 7 more modules</p>
+                <p class="text-gray-300 mb-4">8 chunk detection methods. 5 forensic chunk types. Randar minimap with remote entity detection. Autonomous trail hunting from AFK. Full exploration category overview.</p>
                 <span class="text-green-500 text-sm">Read the deep dive &rarr;</span>
             </a>
-
             <a class="deep-dive-card p-8 rounded-lg block"
                href="https://github.com/unaveragetech/Skylandia/blob/main/docs/features/demon-crystal.md">
                 <div class="text-3xl mb-3">&#128142;</div>
-                <h3 class="text-xl font-bold mb-2 text-green-400">DemonCrystal</h3>
-                <p class="text-gray-400 text-sm mb-4">Crystal PvP automation engine</p>
-                <p class="text-gray-300 mb-4">60-tick movement prediction. Five multi-crystal burst modes. Anti-suicide. Anti-ghost. Pattern-based placement. 15 setting categories. The full loop, handled.</p>
+                <h3 class="text-xl font-bold mb-1 text-green-400">DemonCrystal</h3>
+                <p class="text-gray-400 text-xs mb-3">DemonCrystal &bull; AIRraid &bull; AutoPromo &bull; + automation category overview</p>
+                <p class="text-gray-300 mb-4">60-tick prediction. 5 burst modes. 15 categories of settings. Anti-ghost. Safety suite. Plus AIRraid (aerial TNT), AutoPromo (Wither builder), and the full automation category.</p>
                 <span class="text-green-500 text-sm">Read the deep dive &rarr;</span>
             </a>
-
             <a class="deep-dive-card p-8 rounded-lg block"
                href="https://github.com/unaveragetech/Skylandia/blob/main/docs/features/journey-recorder.md">
                 <div class="text-3xl mb-3">&#128218;</div>
-                <h3 class="text-xl font-bold mb-2 text-green-400">Journey Recorder</h3>
-                <p class="text-gray-400 text-sm mb-4">AI-powered session storytelling</p>
-                <p class="text-gray-300 mb-4">Tracks movement, combat, mining, dimensions, and discoveries with rich context — then generates readable narrative stories via HuggingFace AI.</p>
+                <h3 class="text-xl font-bold mb-1 text-green-400">Journey Recorder</h3>
+                <p class="text-gray-400 text-xs mb-3">JourneyRecorder &bull; GrimEfly &bull; ElytraSwap &bull; OllamaBotModule &bull; + utility overview</p>
+                <p class="text-gray-300 mb-4">AI session narratives via HuggingFace. Plus GrimEfly (no-durability flight), ElytraSwap (auto-repair), OllamaBotModule (local LLM chat), and the full utility category.</p>
                 <span class="text-green-500 text-sm">Read the deep dive &rarr;</span>
             </a>
-
             <a class="deep-dive-card p-8 rounded-lg block"
                href="https://github.com/unaveragetech/Skylandia/blob/main/docs/features/shulker-transport.md">
                 <div class="text-3xl mb-3">&#128230;</div>
-                <h3 class="text-xl font-bold mb-2 text-green-400">Shulker Transport</h3>
-                <p class="text-gray-400 text-sm mb-4">Multi-account dimension logistics</p>
-                <p class="text-gray-300 mb-4">Two accounts. Two dimensions. Structured confirmation handshake, stasis chamber coordination, item blacklisting, and rollback logic if anything goes wrong.</p>
+                <h3 class="text-xl font-bold mb-1 text-green-400">Shulker Transport</h3>
+                <p class="text-gray-400 text-xs mb-3">ShulkerTransport &bull; ChunkChestGrid &bull; SmartShulkerManager &bull; + automation overview</p>
+                <p class="text-gray-300 mb-4">Two-account dimension logistics with stasis chambers and SecureChat. Plus ChunkChestGrid (50&times;50 chunk storage infrastructure) and SmartShulkerManager.</p>
                 <span class="text-green-500 text-sm">Read the deep dive &rarr;</span>
             </a>
-
         </div>
-        <p class="text-center mt-10 text-gray-500 text-sm">These are four of dozens of modules. The full list is in the <a class="text-green-500 hover:text-green-400" href="https://github.com/unaveragetech/Skylandia">README</a>.</p>
     </div>
 </section>
 
-<!-- Access & Security Section -->
-<section class="py-20 bg-gray-800" id="access">
+<!-- Module Catalog -->
+<section class="py-20 bg-gray-800" id="modules">
+    <div class="container mx-auto px-6">
+        <h2 class="text-4xl font-bold text-center mb-4 text-green-500">Module Catalog</h2>
+        <p class="text-center text-gray-400 mb-16 max-w-2xl mx-auto">Six categories. Dozens of modules. Below is a curated sample from each — the full catalog has detailed descriptions for every one.</p>
+        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-lg font-bold mb-3 text-green-400">&#127981; Exploration &amp; Hunting</h3>
+                <ul class="text-gray-300 text-sm space-y-2 mb-4">
+                    <li><strong class="text-green-300">Trails</strong> &mdash; 8-method chunk forensics, 5 chunk types, per-type colors &amp; webhooks</li>
+                    <li><strong class="text-green-300">BetterStashFinder</strong> &mdash; async storage scanner + village/chamber/dungeon detection</li>
+                    <li><strong class="text-green-300">SmartActionBot</strong> &mdash; natural language navigation via Baritone + LLM command parsing</li>
+                    <li><strong class="text-green-300">CoordPoppy</strong> &mdash; Randar minimap, RemoteEntityDetector, SwarmIntegration</li>
+                </ul>
+                <p class="text-xs text-gray-500">+ BaseFinder, CaveDisturbanceDetector, StashBotModule, TerrainAnalyzer, SearchBot, SkyportalFinder, RuleManager, TrailFollower</p>
+            </div>
+
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-lg font-bold mb-3 text-green-400">&#9881;&#65039; Automation</h3>
+                <ul class="text-gray-300 text-sm space-y-2 mb-4">
+                    <li><strong class="text-green-300">DemonCrystal</strong> &mdash; 60-tick prediction, 5 burst modes, 15 setting categories</li>
+                    <li><strong class="text-green-300">AIRraid</strong> &mdash; aerial TNT bombing while elytra-flying, zero manual slot management</li>
+                    <li><strong class="text-green-300">AutoPromo</strong> &mdash; auto W ither summoner with optional auto-naming</li>
+                    <li><strong class="text-green-300">ChunkChestGrid</strong> &mdash; 50&times;50 chunk grid storage builder, 3 routing modes</li>
+                </ul>
+                <p class="text-xs text-gray-500">+ ShulkerTransport, AFKVanillaFly, Printer, SkylandiaHammer, Boomer, AutoEnchant, TridentDupe, Tridentus, Dualist, EndDimensionProcessModule, and more</p>
+            </div>
+
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-lg font-bold mb-3 text-green-400">&#128736;&#65039; Utility</h3>
+                <ul class="text-gray-300 text-sm space-y-2 mb-4">
+                    <li><strong class="text-green-300">GrimEfly</strong> &mdash; chestplate flight, elytra never loses durability</li>
+                    <li><strong class="text-green-300">ElytraSwap</strong> &mdash; auto-replace + Elytra Fixer (Bottles o&rsquo; Enchanting repair)</li>
+                    <li><strong class="text-green-300">OllamaBotModule</strong> &mdash; in-game local LLM, 10-msg memory, trigger prefix</li>
+                    <li><strong class="text-green-300">SecureChatModule</strong> &mdash; encrypted inter-client chat + custom filters</li>
+                </ul>
+                <p class="text-xs text-gray-500">+ GrimDuraFirework, Pitch40Util, InfiniteTools, SignHistorian, TrackerModule, BaritonePathing, JourneyRecorder, Numerology, AutoLoginModule, and more</p>
+            </div>
+
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-lg font-bold mb-3 text-green-400">&#128065;&#65039; Render</h3>
+                <ul class="text-gray-300 text-sm space-y-2 mb-4">
+                    <li><strong class="text-green-300">HoleAndTunnelAndStairsESP</strong> &mdash; PvP terrain geometry, 1024-chunk range</li>
+                    <li><strong class="text-green-300">VanityESP</strong> &mdash; mapart frames, banners, signs &mdash; collector&rsquo;s radar</li>
+                    <li><strong class="text-green-300">EntityClusterESP</strong> &mdash; center-of-mass for dense entity or player groups</li>
+                    <li><strong class="text-green-300">DamageNumbersModule</strong> &mdash; floating damage numbers, yours and incoming</li>
+                </ul>
+                <p class="text-xs text-gray-500">+ PotESP, MobGearESP, DroppedItemESP, CrystalPositionESP, RoleTags, NerdVision, DemonCrystalHUD, OldChunkNotifier, ScreenBlackout, NoRender</p>
+            </div>
+
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-lg font-bold mb-3 text-green-400">&#127849; Loukoumades</h3>
+                <ul class="text-gray-300 text-sm space-y-2 mb-4">
+                    <li><strong class="text-green-300">TunnelBaseFinder</strong> &mdash; RTP to configured region, mine to Y level, tunnel-hunt bases</li>
+                    <li><strong class="text-green-300">AutoSell</strong> &mdash; GUI-shop item selling, whitelist/blacklist mode</li>
+                    <li><strong class="text-green-300">RainNoti</strong> &mdash; weather-state notifications for farm automation</li>
+                </ul>
+                <p class="text-xs text-gray-500">Community-contributed modules maintained under the Loukoumades namespace.</p>
+            </div>
+
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-lg font-bold mb-3 text-green-400">&#128013; Minescript</h3>
+                <ul class="text-gray-300 text-sm space-y-2 mb-4">
+                    <li><strong class="text-green-300">MinescriptIntegration</strong> &mdash; in-game Python editor + launcher</li>
+                    <li>Write, edit, save, and execute <code>.py</code> scripts without leaving Minecraft</li>
+                    <li>Full Minescript API: movement, inventory, chat, block queries</li>
+                    <li>Programmatic script triggering from other Skylandia modules</li>
+                </ul>
+                <p class="text-xs text-gray-500">Requires Minescript mod. Extend Skylandia with your own automation logic.</p>
+            </div>
+
+        </div>
+        <div class="text-center mt-12">
+            <a class="minecraft-btn inline-block" href="https://github.com/unaveragetech/Skylandia/blob/main/docs/modules.md">Browse Full Module Catalog &rarr;</a>
+        </div>
+    </div>
+</section>
+
+<!-- Access -->
+<section class="py-20" id="access">
     <div class="container mx-auto px-6">
         <h2 class="text-4xl font-bold text-center mb-4 text-green-500">Access</h2>
         <p class="text-center text-gray-400 mb-16 max-w-2xl mx-auto">
             Skylandia is closed. Every copy is individually authorized. The mod verifies your identity on every launch before anything loads.
-            How it works is not documented here &mdash; that's intentional.
+            How it works is not documented here &mdash; that&rsquo;s intentional.
         </p>
         <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
             <div class="feature-card p-6 rounded-lg text-center">
@@ -218,7 +322,7 @@
             <div class="feature-card p-6 rounded-lg text-center">
                 <div class="text-4xl mb-4">&#128100;</div>
                 <h3 class="text-lg font-bold mb-2 text-green-400">Earned, Not Bought</h3>
-                <p class="text-gray-400 text-sm">Access comes through Lotus Clan membership or genuine contribution. Not through payment.</p>
+                <p class="text-gray-400 text-sm">Access comes through Lotus Clan membership or genuine contribution.</p>
             </div>
         </div>
         <div class="max-w-2xl mx-auto feature-card p-8 rounded-lg text-center">
@@ -233,8 +337,8 @@
     </div>
 </section>
 
-<!-- Releases Section -->
-<section class="py-20" id="releases">
+<!-- Releases -->
+<section class="py-20 bg-gray-800" id="releases">
     <div class="container mx-auto px-6">
         <h2 class="text-4xl font-bold text-center mb-16 text-green-500">Latest Releases</h2>
         <div class="max-w-4xl mx-auto mb-12">
@@ -244,34 +348,25 @@
                     <span class="version-tag">v1.0.6</span>
                 </div>
                 <div class="changelog-item">
-                    <h4 class="font-bold mb-2">What's New:</h4>
+                    <h4 class="font-bold mb-2">What&rsquo;s New:</h4>
                     <ul class="list-disc ml-4 mb-4">
-                        <li><strong>BetterStashFinder:</strong> Upgraded stash finder with additional filtering options.</li>
-                        <li><strong>AutoEnchanter:</strong> Automates enchanting at anvils, saving time.</li>
-                        <li><strong>GrimEfly:</strong> Vanilla efly using a chestplate so elytra does not use durability.</li>
-                        <li><strong>Trident Dupe:</strong> Trident duplication (note: patched on most servers).</li>
-                        <li><strong>AutoFirework:</strong> Automatically triggers firework use for extra flair.</li>
+                        <li><strong>BetterStashFinder:</strong> Async structure detection, trial chamber support, player detection with 5-min interval logging.</li>
+                        <li><strong>AutoEnchanter:</strong> Full enchanting workflow automation.</li>
+                        <li><strong>GrimEfly:</strong> Chestplate bounce flight &mdash; elytra never loses durability.</li>
+                        <li><strong>AIRraid:</strong> Aerial TNT bombing while elytra flying.</li>
+                        <li><strong>ChunkChestGrid:</strong> 50&times;50 chunk storage grid builder with 3 routing modes.</li>
+                        <li><strong>AutoPromo:</strong> Wither summoner with auto-naming support.</li>
+                        <li><strong>OllamaBotModule:</strong> Local LLM chat assistant with 10-message context window.</li>
                     </ul>
                 </div>
                 <div class="changelog-item">
-                    <h4 class="font-bold mb-2">Current Features:</h4>
-                    <ul class="list-disc ml-4 mb-4">
-                        <h5 class="font-semibold mt-2">Utility:</h5>
-                        <li>ActivatedSpawnerDetector, SignHistorian, ElytraSwap, GrimEfly</li>
-                        <h5 class="font-semibold mt-2">Exploration:</h5>
-                        <li>BaseFinder, CaveDisturbanceDetector, TrailFollower, Pitch40Util, OldChunkNotifier</li>
-                        <h5 class="font-semibold mt-2">Renders:</h5>
-                        <li>HoleESP, PotESP, MobGearESP, EntityClusterESP, DroppedItemESP</li>
-                        <h5 class="font-semibold mt-2">Automation:</h5>
-                        <li>DemonCrystal, ShulkerTransport, JourneyRecorder, AutoEnchant, TridentDupe</li>
-                    </ul>
-                </div>
-                <div class="changelog-item">
-                    <h4 class="font-bold mb-2">Known Issues:</h4>
-                    <ul class="list-disc ml-4 mb-4">
-                        <li>Minor rendering glitches during dimension transitions</li>
-                        <li>Rare server-side compatibility issues with certain chunk detection methods</li>
-                    </ul>
+                    <h4 class="font-bold mb-2">Current Module Highlights:</h4>
+                    <div class="text-sm text-gray-300">
+                        <p class="mb-1"><span class="text-green-400">Exploration:</span> Trails, TrailFollower, BetterStashFinder, CoordPoppy, SmartActionBot, BaseFinder, CaveDisturbanceDetector</p>
+                        <p class="mb-1"><span class="text-green-400">Automation:</span> DemonCrystal, AIRraid, AutoPromo, ChunkChestGrid, ShulkerTransport, AFKVanillaFly, Printer, Boomer</p>
+                        <p class="mb-1"><span class="text-green-400">Utility:</span> GrimEfly, ElytraSwap, OllamaBotModule, SecureChatModule, GrimDuraFirework, JourneyRecorder</p>
+                        <p class="mb-1"><span class="text-green-400">Render:</span> HoleAndTunnelAndStairsESP, VanityESP, EntityClusterESP, DamageNumbers, PotESP, MobGearESP, CrystalPositionESP</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -283,36 +378,29 @@
                         <h4 class="text-lg font-bold">Version 1.0.4</h4>
                         <span class="version-tag">v1.0.4</span>
                     </div>
-                    <ul class="list-disc ml-4 mb-4">
-                        <li>StackedMinecartDetector, EntityClusterESP, DroppedItemESP</li>
-                        <li>ScreenshotFolderCommand, MeteorFolderCommand</li>
-                    </ul>
+                    <ul class="list-disc ml-4"><li>StackedMinecartDetector, EntityClusterESP, DroppedItemESP</li><li>ScreenshotFolderCommand, MeteorFolderCommand</li></ul>
                 </div>
                 <div class="feature-card p-6 rounded-lg">
                     <div class="flex justify-between items-center mb-4">
                         <h4 class="text-lg font-bold">Version 1.0.3</h4>
                         <span class="version-tag">v1.0.3</span>
                     </div>
-                    <ul class="list-disc ml-4 mb-4">
-                        <li>SignHistorian, ElytraSwap, TrailFollower, Pitch40Util</li>
-                    </ul>
+                    <ul class="list-disc ml-4"><li>SignHistorian, ElytraSwap, TrailFollower, Pitch40Util</li></ul>
                 </div>
                 <div class="feature-card p-6 rounded-lg">
                     <div class="flex justify-between items-center mb-4">
                         <h4 class="text-lg font-bold">Version 1.0.2</h4>
                         <span class="version-tag">v1.0.2</span>
                     </div>
-                    <ul class="list-disc ml-4 mb-4">
-                        <li>NewChunks detection, improved BaseFinder, MobGearESP</li>
-                    </ul>
+                    <ul class="list-disc ml-4"><li>NewChunks detection, improved BaseFinder, MobGearESP</li></ul>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Installation Section -->
-<section class="py-20 bg-gray-800" id="installation">
+<!-- Installation -->
+<section class="py-20" id="installation">
     <div class="container mx-auto px-6">
         <h2 class="text-4xl font-bold text-center mb-16 text-green-500">Installation</h2>
         <div class="max-w-3xl mx-auto">
@@ -334,20 +422,25 @@
     </div>
 </section>
 
-<!-- Support Section -->
-<section class="py-20" id="support">
+<!-- Support -->
+<section class="py-20 bg-gray-800" id="support">
     <div class="container mx-auto px-6">
         <h2 class="text-4xl font-bold text-center mb-16 text-green-500">Support</h2>
-        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
             <div class="feature-card p-6 rounded-lg">
                 <h3 class="text-xl font-bold mb-4 text-green-400">Community</h3>
-                <p class="mb-4">Questions, bugs, access requests &mdash; everything goes through Discord:</p>
+                <p class="mb-4">Questions, bugs, access requests:</p>
                 <a class="minecraft-btn inline-block" href="https://discord.gg/MjMnsGhe8T">Join Discord</a>
             </div>
             <div class="feature-card p-6 rounded-lg">
                 <h3 class="text-xl font-bold mb-4 text-green-400">GitHub</h3>
-                <p class="mb-4">Documentation, feature deep-dives, and public information:</p>
+                <p class="mb-4">Documentation and module catalog:</p>
                 <a class="minecraft-btn inline-block" href="https://github.com/unaveragetech/Skylandia">View on GitHub</a>
+            </div>
+            <div class="feature-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-4 text-green-400">Module Catalog</h3>
+                <p class="mb-4">Detailed descriptions for every module:</p>
+                <a class="minecraft-btn inline-block" href="https://github.com/unaveragetech/Skylandia/blob/main/docs/modules.md">Browse Catalog</a>
             </div>
         </div>
     </div>
@@ -363,6 +456,7 @@
             <div class="flex space-x-6">
                 <a class="hover:text-green-500 transition-colors" href="https://github.com/unaveragetech/Skylandia">GitHub</a>
                 <a class="hover:text-green-500 transition-colors" href="https://discord.gg/MjMnsGhe8T">Discord</a>
+                <a class="hover:text-green-500 transition-colors" href="https://github.com/unaveragetech/Skylandia/blob/main/docs/modules.md">Catalog</a>
                 <a class="hover:text-green-500 transition-colors" href="https://github.com/unaveragetech/Skylandia/graphs/contributors">Contributors</a>
             </div>
         </div>
